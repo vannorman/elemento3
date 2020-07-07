@@ -16,6 +16,7 @@ namespace Elemento
 		public HandPoseTracker hand;
 		public delegate void OnSpellCastCompleted();
 		public OnSpellCastCompleted onSpellCastCompleted;
+
 		// Start is called before the first frame update
 		void Start()
 		{
@@ -32,7 +33,7 @@ namespace Elemento
 		bool castingSpellState = false;
 		Spell currentSpell;
 		float spellTime = 0f;
-		int spellSequenceIndex = 0;
+		int seqInd = 0;
 
 
 
@@ -57,9 +58,8 @@ namespace Elemento
 						castingSpellState = true;
 						currentSpell = spell;
 						spellTime = 0;
-						spellSequenceIndex = 0;
-						currentSpell.sequence[spellSequenceIndex].action?.Invoke();
-						spellSequenceIndex++;
+						seqInd = 0;
+						currentSpell.sequence[seqInd].action?.Invoke();
 						spellIdentifier.text = "SPELL IDENTIFIED! NAME: " + currentSpell.name + "STAGE: 0 .. ";
 						break;
 					}
@@ -67,44 +67,54 @@ namespace Elemento
 			}
 			if (castingSpellState && currentSpell != null)
 			{
+				//(*
+// So the issue is that spell sequence index should be the LAST gesture you achieved, not the CURRENT DESIRED gesture -- it's one index ahead.
+// That way we can test if the CURRENTLY ACHIEVED gesture should be maintained / cancel spell.
+
+				// Current issue is that for FORCE MOVE, I can ENTER the state of the grab, but when I release the grab gesture, it's not detected by breakPoseCancels below.
+				// So, I cannot cancel my spell by releaseing the gesture.
+
 				// We've already achieved the first state of the spell, and will now listen for the next item in the sequence.
 
-				// If the user's hand is still matching the first item, do not increase the time. Only increase the spell time if user breaks pose from the initiator pose.
 				if (!PoseWithinTolerance(hand.CurrentPose, currentSpell.sequence[0].pose, currentSpell.sequence[0].tolerance))
 				{
+					// If the user's hand is still matching the first item, do not increase the time. Only increase the spell time if user breaks pose from the initiator pose.
 					spellTime += Time.deltaTime;
 				}
 
-				if (spellTime > currentSpell.sequence[spellSequenceIndex].time && !timeModeInfinite)
+				if (currentSpell.sequence[seqInd].breakPoseCancels && !PoseWithinTolerance(hand.CurrentPose, currentSpell.sequence[seqInd].pose, currentSpell.sequence[seqInd].tolerance))
 				{
-					spellIdentifier.text = "Lost spell (time):" + currentSpell.name;
-					currentSpell.canceled?.Invoke();
-					currentSpell = null;
-					castingSpellState = false;
+					// We were supposed to keep this pose -- breaking it cancels the spell.
+					CancelCurrentSpell();
 					return;
 				}
-				if (PoseWithinTolerance(hand.CurrentPose, currentSpell.sequence[spellSequenceIndex].pose, currentSpell.sequence[spellSequenceIndex].tolerance))
-				{
-					spellIdentifier.text += spellSequenceIndex.ToString() + " .. ";
-					currentSpell.sequence[spellSequenceIndex].action.Invoke();
-					// advance to next. If last, cast the spell.
-					if (spellSequenceIndex >= currentSpell.sequence.Count - 1)
-					{
-						spellIdentifier.text += " CAST finished.";
-						onSpellCastCompleted?.Invoke();
-						currentSpell = null;
-						castingSpellState = false;
-					}
-					else
-					{
-						spellSequenceIndex++;
-					}
 
+				if (spellTime > currentSpell.sequence[seqInd].time && !timeModeInfinite)
+				{
+					// We exceeded the maximum time for this spell.
+					CancelCurrentSpell();
+
+					return;
+				}
+				if (seqInd < currentSpell.sequence.Count - 1 && PoseWithinTolerance(hand.CurrentPose, currentSpell.sequence[seqInd+1].pose, currentSpell.sequence[seqInd+1].tolerance))
+				{
+					// you invoked the next stage of the spell.
+					seqInd++;
+					spellTime = 0;
+					currentSpell.sequence[seqInd].action?.Invoke();
 				}
 			}
 		}
 
-		private void DetectPoseAndPlayTone(Spell spell)
+        private void CancelCurrentSpell()
+        {
+			spellIdentifier.text = "Lost spell (time):" + currentSpell.name;
+			currentSpell.canceled?.Invoke();
+			currentSpell = null;
+			castingSpellState = false;
+		}
+
+        private void DetectPoseAndPlayTone(Spell spell)
 		{
 			// detect a spell that is "closest" wrt tones available and make those tones appear if close by
 			// for each spell compare current pose distances for tones
@@ -136,8 +146,8 @@ namespace Elemento
 		public SpellData GetSpellData()
 		{
 			// data construct explicitly used for spell debugging to see what spell we're on and what stage
-			var timeLeft = currentSpell != null ? currentSpell.sequence[spellSequenceIndex].time - spellTime : -1;
-			return new SpellData(currentSpell, spellSequenceIndex,  timeLeft );
+			var timeLeft = currentSpell != null ? currentSpell.sequence[seqInd].time - spellTime : -1;
+			return new SpellData(currentSpell, seqInd,  timeLeft );
 		}
 
 		public class SpellData

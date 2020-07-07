@@ -8,11 +8,10 @@ using static Elemento.AudioPlayer;
 namespace Elemento
 {
 	using Pose = PoseData.Pose;
-	public static class Spells
+    using Random = UnityEngine.Random;
+
+    public static class Spells
 	{
-		public static Pose fireStartP = new Pose(0.05f, 0.05f, 0.06f, 0.07f, 0.02f, 0.02f, 0.02f, -68f, -250f, -77f, -245f, -81f, -249f, -76f, -242f, 79.33f, 22.28f, 89.5f, 109.91f);
-		//public static Pose fireEndP = new Pose(0.09f, 0.11f, 0.11f, 0.11f, 0.02f, 0.02f, 0.03f, 8f, 10f, 3f, 10f, 6f, 8f, 5f, -1f, 85.09f, 13.75f, 77.07f, 78.37f);
-		public static Pose fireEndP = new Pose(0.09f, 0.11f, 0.11f, 0.1f, 0.02f, 0.02f, 0.03f, 5f, 8f, 3f, 6f, 5f, 5f, 3f, -1f, 74.99f, 15.1f, 73.74f, 82.18f);
 		public static Pose tolerance_01 = new Pose(
 			_thumbToIndex: 0.02f,
 			_thumbToMiddle: 0.02f,
@@ -34,10 +33,8 @@ namespace Elemento
 			_palmFaceRight: 31.9f,
 			_palmPointsUp: 34.09f
 			);
-		public static Pose teleportStartP = new Pose(0.11f, 0.01f, 0.07f, 0.08f, 0.11f, 0.07f, 0.01f, -10f, -10f, -67f, -117f, -77f, -223f, -75f, -219f, 87.78f, 11.59f, 97.96f, 94.14f);
-		public static Pose teleportEndP = new Pose(0.12f, 0.08f, 0.09f, 0.1f, 0.12f, 0.02f, 0.01f, -14f, -7f, -78f, -247f, -87f, -235f, -90f, -227f, 81.48f, 13.98f, 91.7f, 92.43f);
+		
 
-		//public static Pose brandonTeleportStartP = new Pose(, , ,, 0.01f, 0.01f, 0f, -1f, -50f, -128f, -53f, -138f, -44f, -123f, 110.84f, 8.72f, 83.5f, 84.06f);
 		public static Pose brandonTeleportStartP =
 			new Pose(
 				_thumbToIndex: 0.13f,
@@ -110,49 +107,9 @@ namespace Elemento
 			_palmPointsUp			: 34.09f
 			);
 
-		public static Pose forcePushStart = new Pose(
-			_thumbToIndex: 0.05f,
-			_thumbToMiddle: 0.05f,
-			_thumbToRing: 0.07f,
-			_thumbToPinky: 0.07f,
-			_betweenTipsIndexMiddle: 0.02f,
-			_betweenTipsMiddleRing: 0.02f,
-			_betweenTipsRingPinky: 0.01f,
-			_indexFirstJoint: -72f,
-			_indexTotal: -234f,
-			_middleFirstJoint: -77f,
-			_middleTotal: -228f,
-			_ringFirstJoint: -83f,
-			_ringTotal: -238f,
-			_pinkyFirstJoint: -81f,
-			_pinkyTotal: -240f,
-			_wristPointsForward: 80.22f,
-			_wristPointsUp: 14.8f,
-			_palmFaceRight: 93.19f,
-			_palmPointsUp: 104.42f
-		);
+		
 
-		public static Pose forcePushEnd = new Pose(
-			_thumbToIndex: 0.1f,
-			_thumbToMiddle: 0.13f,
-			_thumbToRing: 0.13f,
-			_thumbToPinky: 0.13f,
-			_betweenTipsIndexMiddle: 0.03f,
-			_betweenTipsMiddleRing: 0.02f,
-			_betweenTipsRingPinky: 0.03f,
-			_indexFirstJoint: 12f,
-			_indexTotal: 19f,
-			_middleFirstJoint: 8f,
-			_middleTotal: 16f,
-			_ringFirstJoint: 10f,
-			_ringTotal: 12f,
-			_pinkyFirstJoint: 13f,
-			_pinkyTotal: 4f,
-			_wristPointsForward: 84.28f,
-			_wristPointsUp: 16.48f,
-			_palmFaceRight: 74.22f,
-			_palmPointsUp: 78.38f
-		);
+		
 
 
 		public static Pose forceMoveStart = new Pose(
@@ -218,11 +175,95 @@ namespace Elemento
 			_palmFaceRight: 50.9f,
 			_palmPointsUp: 50.09f
 			);
+		private static Pose forceMoveGrabTolerance = new Pose(
+			_thumbToIndex: 0.03f,
+			_thumbToMiddle: 0.03f,
+			_thumbToRing: 0.03f,
+			_thumbToPinky: 0.03f,
+			_betweenTipsIndexMiddle: 0.03f,
+			_betweenTipsMiddleRing: 0.02f,
+			_betweenTipsRingPinky: 0.02f,
+			_indexFirstJoint: 45f,
+			_indexTotal: 150f,
+			_middleFirstJoint: 45f,
+			_middleTotal: 150f,
+			_ringFirstJoint: 45f,
+			_ringTotal: 150f,
+			_pinkyFirstJoint: 50f,
+			_pinkyTotal: 160f,
+			_wristPointsForward: 999,
+			_wristPointsUp: 999,
+			_palmFaceRight: 999,
+			_palmPointsUp: 999
+			);
 
-		public static Pose brandonFireStart = new Pose(0.05f, 0.07f, 0.08f, 0.09f, 0.02f, 0.02f, 0.02f, -80f, -189f, -88f, -190f, -94f, -202f, -89f, -212f, 84.79f, 13.9f, 93.28f, 103.49f);
-		public static Pose brandonFireEnd = new Pose(0.07f, 0.09f, 0.09f, 0.09f, 0.02f, 0.02f, 0.03f, 4f, 5f, -2f, 4f, 4f, 2f, 15f, -8f, 86.57f, 16.29f, 82.54f, 76.17f);
-		public static Pose brandonFireEnd2 = new Pose(0.07f, 0.08f, 0.09f, 0.09f, 0.02f, 0.02f, 0.03f, 3f, 3f, -4f, 0f, 2f, 0f, 17f, -10f, 91.29f, 13.22f, 82.39f, 79.49f);
+		public static Pose forcePushStart = new Pose(0.05f, 0.07f, 0.08f, 0.09f, 0.02f, 0.02f, 0.02f, -80f, -189f, -88f, -190f, -94f, -202f, -89f, -212f, 84.79f, 13.9f, 93.28f, 103.49f);
+		public static Pose forcePushEnd = new Pose(0.07f, 0.09f, 0.09f, 0.09f, 0.02f, 0.02f, 0.03f, 4f, 5f, -2f, 4f, 4f, 2f, 15f, -8f, 86.57f, 16.29f, 82.54f, 76.17f);
 
+		
+		public static Pose pullMatterFromGroundStart = new Pose(
+			_thumbToIndex: 0.1f,
+			_thumbToMiddle: 0.13f,
+			_thumbToRing: 0.14f,
+			_thumbToPinky: 0.16f,
+			_betweenTipsIndexMiddle: 0.03f,
+			_betweenTipsMiddleRing: 0.03f,
+			_betweenTipsRingPinky: 0.05f,
+			_indexFirstJoint: -3f,
+			_indexTotal: -7f,
+			_middleFirstJoint: -12f,
+			_middleTotal: -16f,
+			_ringFirstJoint: -4f,
+			_ringTotal: -14f,
+			_pinkyFirstJoint: 12f,
+			_pinkyTotal: -7f,
+			_wristPointsForward: 41.76f,
+			_wristPointsUp: 63.68f,
+			_palmFaceRight: 71.26f,
+			_palmPointsUp: 27.88f);
+
+		public static Pose pullMatterFromGroundTwo = new Pose(
+			_thumbToIndex: 0.04f,
+			_thumbToMiddle: 0.05f,
+			_thumbToRing: 0.06f,
+			_thumbToPinky: 0.07f,
+			_betweenTipsIndexMiddle: 0.02f,
+			_betweenTipsMiddleRing: 0.02f,
+			_betweenTipsRingPinky: 0.02f,
+			_indexFirstJoint: -49f,
+			_indexTotal: -213f,
+			_middleFirstJoint: -62f,
+			_middleTotal: -220f,
+			_ringFirstJoint: -76f,
+			_ringTotal: -231f,
+			_pinkyFirstJoint: -77f,
+			_pinkyTotal: -227f,
+			_wristPointsForward: 51.96f,
+			_wristPointsUp: 58.65f,
+			_palmFaceRight: 62.42f,
+			_palmPointsUp: 36.01f
+			);
+
+		public static Pose pullMatterFromGroundEnd = new Pose(
+			_thumbToIndex: 0.05f,
+			_thumbToMiddle: 0.05f,
+			_thumbToRing: 0.06f,
+			_thumbToPinky: 0.07f,
+			_betweenTipsIndexMiddle: 0.02f,
+			_betweenTipsMiddleRing: 0.02f,
+			_betweenTipsRingPinky: 0.02f,
+			_indexFirstJoint: -64f,
+			_indexTotal: -245f,
+			_middleFirstJoint: -73f,
+			_middleTotal: -245f,
+			_ringFirstJoint: -77f,
+			_ringTotal: -244f,
+			_pinkyFirstJoint: -73f,
+			_pinkyTotal: -243f,
+			_wristPointsForward: 110.7f,
+			_wristPointsUp: 16.59f,
+			_palmFaceRight: 71.17f,
+			_palmPointsUp: 93.01f);
 
 		public class PoseSequenceItem
 		{
@@ -231,13 +272,15 @@ namespace Elemento
 			public Pose tolerance;
 			public Action action;
 			public List<TonePosePair> tones;
-			public PoseSequenceItem(float _time, Pose _pose, Pose _tolerance, Action _action = null, List<TonePosePair> _tones = null)
+			public bool breakPoseCancels;
+			public PoseSequenceItem(float _time, Pose _pose, Pose _tolerance, Action _action = null, bool _breakPoseCancels = false, List<TonePosePair> _tones = null)
 			{
 				time = _time;
 				pose = _pose;
 				tolerance = _tolerance;
 				action = _action;
 				tones = _tones;
+				breakPoseCancels = _breakPoseCancels;
 			}
 			public PoseSequenceItem(float _time, Pose _pose)
 			{
@@ -276,60 +319,33 @@ namespace Elemento
 					"Push",
 					new List<PoseSequenceItem>()
 					{
-						new PoseSequenceItem( 0, brandonFireStart ),
-						new PoseSequenceItem( .5f, brandonFireEnd, tolerance_01, forcePushAction )
+						new PoseSequenceItem( 0, forcePushStart ),
+						new PoseSequenceItem( .5f, forcePushEnd, tolerance_01, forcePushAction )
 					}
 				
 				);
 			}
 		}
 
-		static Spell teleport
+
+		static Spell Teleport
 		{
 			get
 			{
-				Action activateTeleportFn = () => Teleport.SetStateStatic(Teleport.State.ShowLine);
-				Action executeTeleportFn = () => Teleport.TeleportNowStatic();
-				Action cancelAction = () => Teleport.CancelStatic();
-
-				var poseTones = new List<TonePosePair>
-				{
-					new TonePosePair(Tone.A, 0, .01f), // thumb to index
-					new TonePosePair(Tone.B, 1, .01f), // thumb to middle
-				};
+                Action a1 = () => global::Teleport.SetStateStatic(global::Teleport.State.ShowLine);
+                Action a2 = () => global::Teleport.TeleportNowStatic();
+                Action cancelAction = () => global::Teleport.CancelStatic();
+				//var poseTones = new List<TonePosePair>
+				//{
+				//	new TonePosePair(Tone.A, 0, .05f), // thumb to index
+				//	new TonePosePair(Tone.B, 1, .05f), // thumb to middle
+				//};
 				return new Spell
 				(
 					"Teleport",
 					new List<PoseSequenceItem>()
 					{
-						new PoseSequenceItem( 0, teleportStartP, teleportTolerance, activateTeleportFn, poseTones ),
-						new PoseSequenceItem( .5f, teleportEndP, teleportTolerance, executeTeleportFn ),
-					},
-					cancelAction
-
-
-				);
-			}
-		}
-
-		static Spell BrandonTeleport
-		{
-			get
-			{
-				Action a1 = () => Teleport.SetStateStatic(Teleport.State.ShowLine);
-				Action a2 = () => Teleport.TeleportNowStatic();
-				Action cancelAction = () => Teleport.CancelStatic();
-				var poseTones = new List<TonePosePair>
-				{
-					new TonePosePair(Tone.A, 0, .05f), // thumb to index
-					new TonePosePair(Tone.B, 1, .05f), // thumb to middle
-				};
-				return new Spell
-				(
-					"Teleport",
-					new List<PoseSequenceItem>()
-					{
-						new PoseSequenceItem( 0, brandonTeleportStartP, teleportTolerance, a1, poseTones ),
+						new PoseSequenceItem( 3, brandonTeleportStartP, teleportTolerance, a1 ),
 						new PoseSequenceItem( .5f, brandonTeleportEndP, teleportTolerance, a2 ),
 					},
 					cancelAction
@@ -344,16 +360,16 @@ namespace Elemento
 			get
 			{
 				Action selectAndHighlightCubes = () => { SpellForceMove.Instance.SetState(SpellForceMove.State.SelectAndHighlight); };
-				Action beingMovingCubes = () => SpellForceMove.Instance.SetState(SpellForceMove.State.Moving);
+				Action beginMoveingCubes = () => SpellForceMove.Instance.SetState(SpellForceMove.State.Moving);
 				Action cancelAction = () => SpellForceMove.Instance.SetState(SpellForceMove.State.Ready);
 				return new Spell
 				(
 					"Force Move",
 					new List<PoseSequenceItem>()
 					{
-						new PoseSequenceItem(0, forceMoveStart, forceMoveTolerance, selectAndHighlightCubes),
-						new PoseSequenceItem(30, forceMoveGrab, forceMoveTolerance, beingMovingCubes),
-
+						new PoseSequenceItem(3, forceMoveStart, forceMoveTolerance, selectAndHighlightCubes),
+						new PoseSequenceItem(30, forceMoveGrab, forceMoveGrabTolerance, beginMoveingCubes, true), // if you break this pose, it cancels.
+						//new PoseSequenceItem(0, forceMoveStart, forceMoveTolerance, cancelAction),
 					},
 					cancelAction
 
@@ -361,9 +377,37 @@ namespace Elemento
 			}
 		}
 
+		public static Spell CubeFountain
+		{
+			get
+			{
+				Action cubeFountain = () => 
+				{ 
+					for (var i = 0; i < 20; i++) 
+					{ 
+						var c = GameObject.CreatePrimitive(PrimitiveType.Cube); 
+						c.AddComponent<Rigidbody>(); 
+						c.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 4f + Random.insideUnitSphere * 1.5f; 
+						c.GetComponent<Rigidbody>().AddForce(Vector3.up + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)) * 100f); 
+					} 
+				};
+				return new Spell
+				(
+                    "Cube Fountain",
+					new List<PoseSequenceItem>()
+					{
+						new PoseSequenceItem(2, pullMatterFromGroundStart, tolerance_01),
+						new PoseSequenceItem(2, pullMatterFromGroundTwo, tolerance_01),
+						new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, cubeFountain)
+					}
+					
+				);
+			}
+		}
 
 
-		public static List<Spell> spells = new List<Spell> { forcePush,  BrandonTeleport, ForceMove };
+
+		public static List<Spell> spells = new List<Spell> { forcePush,  Teleport, ForceMove, CubeFountain };
 
 
 		// This tone pose pair indicators allow tones to manifest when certain pose metrics get within certain bounds.

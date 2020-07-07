@@ -143,7 +143,6 @@ public class Teleport : MonoBehaviour
 				target.SetActive(false);
 				break;
 			case State.ShowLine:
-				Debug.Log("state swapped showline");
 				target.SetActive(true);
 
 				break;
