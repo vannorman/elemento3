@@ -60,7 +60,7 @@ namespace Elemento
 						spellTime = 0;
 						seqInd = 0;
 						currentSpell.sequence[seqInd].action?.Invoke();
-						spellIdentifier.text = "SPELL IDENTIFIED! NAME: " + currentSpell.name + "STAGE: 0 .. ";
+						//spellIdentifier.text = "SPELL IDENTIFIED! NAME: " + currentSpell.name + "STAGE: 0 .. ";
 						break;
 					}
 				}
@@ -108,7 +108,7 @@ namespace Elemento
 
         private void CancelCurrentSpell()
         {
-			spellIdentifier.text = "Lost spell (time):" + currentSpell.name;
+			//spellIdentifier.text = "Lost spell (time):" + currentSpell.name;
 			currentSpell.canceled?.Invoke();
 			currentSpell = null;
 			castingSpellState = false;

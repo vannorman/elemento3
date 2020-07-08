@@ -92,7 +92,18 @@ namespace Elemento
 			CurrentPose.palmPointsUp = palmPointsUp;
 			CurrentPose.palmFaceRight = palmFaceRight;
 			CurrentPose.wristPointsUp = wristPointsUp;
+
+			CurrentPose.thumbToIndex = GetTipDistance(Finger.Thumb, Finger.Index);
+			CurrentPose.thumbToMiddle = GetTipDistance(Finger.Thumb, Finger.Middle);
+			CurrentPose.thumbToRing = GetTipDistance(Finger.Thumb, Finger.Ring);
+			CurrentPose.thumbToPinky = GetTipDistance(Finger.Thumb, Finger.Pinky);
+			CurrentPose.betweenTipsIndexMiddle = GetTipDistance(Finger.Index, Finger.Middle);
+			CurrentPose.betweenTipsMiddleRing = GetTipDistance(Finger.Middle, Finger.Ring);
+			CurrentPose.betweenTipsRingPinky = GetTipDistance(Finger.Ring, Finger.Pinky);
 		}
+
+		
+
 
 		float GetTipDistance(Finger a, Finger b)
 		{

@@ -54994,7 +54994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ddb4c9590d88b94fbdd904c145c4f61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 100
+  force: 30
   castingHand: {fileID: 2049021751}
   radius: 2.1
   range: 15

@@ -385,10 +385,12 @@ namespace Elemento
 				{ 
 					for (var i = 0; i < 20; i++) 
 					{ 
-						var c = GameObject.CreatePrimitive(PrimitiveType.Cube); 
+						var c = GameObject.CreatePrimitive(PrimitiveType.Cube);
+						c.transform.localScale *= 0.4f;
 						c.AddComponent<Rigidbody>(); 
-						c.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 4f + Random.insideUnitSphere * 1.5f; 
-						c.GetComponent<Rigidbody>().AddForce(Vector3.up + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)) * 100f); 
+						c.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 4f + Random.insideUnitSphere * 3.5f; 
+						c.GetComponent<Rigidbody>().AddForce(Vector3.up + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)) * 100f);
+						c.GetComponent<Renderer>().material.color = Utils2.RandomColor;
 					} 
 				};
 				return new Spell

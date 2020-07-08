@@ -8,7 +8,8 @@ using static Elemento.Spells;
 
 namespace Elemento
 {
-	using System;
+    using OVRTouchSample;
+    using System;
 	using static Elemento.SpellCastListener;
 	using Pose = PoseData.Pose;
 	public class SpellDebugger : MonoBehaviour
@@ -176,6 +177,7 @@ namespace Elemento
 		void Update()
 		{
 			UpdatePoseText(current, handPoseTracker.CurrentPose);
+			Debug.Log("curpose index first;" + handPoseTracker.CurrentPose.thumbToIndex);
 			UpdateDeltaPoseTexts();
 
 

@@ -13,7 +13,7 @@ public static class Utils2
 	{
 		return (from x in t.GetComponentsInChildren<Transform>()
 				where x.gameObject.name == name
-				select x.gameObject).First().transform;
+				select x.gameObject).FirstOrDefault()?.transform;
 	}
 
 	[MenuItem("Edit/Editor Tools/Set Local Position To Zero %#y")]
