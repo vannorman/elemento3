@@ -254,10 +254,10 @@ namespace Elemento
 			_palmFaceCamera: 140f
 			);
 		public static Pose forcePushTolerance = new Pose(
-			_thumbToIndex: 0.05f,
-			_thumbToMiddle: 0.05f,
-			_thumbToRing: 0.05f,
-			_thumbToPinky: 0.05f,
+			_thumbToIndex: 0.09f,
+			_thumbToMiddle: 0.09f,
+			_thumbToRing: 0.09f,
+			_thumbToPinky: 0.09f,
 			_betweenTipsIndexMiddle: 0.02f,
 			_betweenTipsMiddleRing: 0.02f,
 			_betweenTipsRingPinky: 0.02f,
@@ -395,15 +395,31 @@ namespace Elemento
 				Action<HandPoseTracker> forcePushAction = (HandPoseTracker handTracker) =>
 				{
 					Physics.SphereCastAll(handTracker.hand.position, 1f, handTracker.PalmForwardDirection, 15f).ToList()
-						.Where(x => x.collider.GetComponent<Rigidbody>() != null).ToList()
-						.ForEach(x => x.collider.GetComponent<Rigidbody>()?.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * 500f));
+						.ForEach(x =>
+						{
+							var rb = x.collider.GetComponent<Rigidbody>();
+							if (rb)
+							{
+								if (rb.isKinematic && rb.GetComponent<AllowKinematicToggle>())
+								{
+									rb.isKinematic = false;
+								}
+								if (!rb.isKinematic)
+                                {
+									rb.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * 500f);
+                                }
+							}
+							var ai = x.collider.GetComponent<AICharacter>();
+							if (ai) ai.RunAway();
+						});
+					
 					Utils2.SpellDebug("Force push");
-                    Utils2.DebugSphere(handTracker.hand.position, 0.1f, Color.blue);
-                    Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .1f, 0.1f, Color.blue);
-                    Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .2f, 0.1f, Color.blue);
-                    Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .3f, 0.2f, Color.green);
+                    Utils2.DebugSphere(handTracker.hand.position, 0.1f, Color.blue, 0.5f);
+                    Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .1f, 0.1f, Color.blue, 0.5f);
+					Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .2f, 0.1f, Color.blue, 0.5f);
+					Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .3f, 0.2f, Color.green, 0.5f);
 
-                };
+				};
 				return new Spell
 				(
 					"Push",

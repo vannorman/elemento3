@@ -70,22 +70,7 @@ public static class Utils2
 	}
 
 
-	static Text debugOut;
-    internal static void SpellDebug(string v)
-    {
-		if (!debugOut) debugOut = GameObject.FindObjectOfType<DebugOut>()?.GetComponent<Text>();
-		if (!debugOut) return;
-		debugOut.text += "\n"+v;
-		var lines = debugOut.text.Split('\n');
-		var maxLines = 20;
-		if (lines.Length > maxLines)
-		{
-			// trim top if excess
-			var lines2 = lines.ToList().Skip(1).ToArray();
-			var lines2string = string.Join("\n", lines2);
-			debugOut.text = lines2string;
-		}
-    }
+
 
     [MenuItem("Edit/Editor Tools/DeClump Items #%w")]
 	public static void DeClumpItems()
@@ -97,6 +82,23 @@ public static class Utils2
 		/// Selection.gameObjects.Count;
 	}
 #endif
+
+	static Text debugOut;
+	internal static void SpellDebug(string v)
+	{
+		if (!debugOut) debugOut = GameObject.FindObjectOfType<DebugOut>()?.GetComponent<Text>();
+		if (!debugOut) return;
+		debugOut.text += "\n" + v;
+		var lines = debugOut.text.Split('\n');
+		var maxLines = 20;
+		if (lines.Length > maxLines)
+		{
+			// trim top if excess
+			var lines2 = lines.ToList().Skip(1).ToArray();
+			var lines2string = string.Join("\n", lines2);
+			debugOut.text = lines2string;
+		}
+	}
 
 	public static Color Purple
 
@@ -157,7 +159,7 @@ public static class Utils2
 		return new Vector3(a.x, 0, a.z);
 	}
 
-    internal static void DebugSphere(Vector3 p, float scale, Color color)
+	internal static void DebugSphere(Vector3 p, float scale, Color color, float destroyAfterSeconds = 4f)
     {
 		var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		s.transform.position = p;
@@ -165,7 +167,7 @@ public static class Utils2
 		s.GetComponent<Renderer>().material.color = color;
 		GameObject.Destroy(s.GetComponent<Collider>());
 		var tod = s.AddComponent<TimedObjectDestructor>();
-		tod.DestroyAfterSeconds(5);
+		tod.DestroyAfterSeconds(destroyAfterSeconds);
 
     }
     #endregion
