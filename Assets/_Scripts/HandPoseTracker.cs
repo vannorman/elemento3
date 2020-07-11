@@ -3,15 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+public enum HandType
+{
+	Left,
+	Right
+}
+
 namespace Elemento
 {
 	using Pose = PoseData.Pose;
 	public class HandPoseTracker : MonoBehaviour
 	{
-		
+		// NOTE: Hand XYZ is inverted for RIGHT/LEFT on X-axis. So X-fwd on LEFT is wrist direction, X-fwd on RIGHt is negative wrist direciton.
+
 		public Transform hand;
 		public GameObject _smoothFollowHand;
 		public Transform _bones;
+		public HandType handType;
 
 		public bool initialized { get; private set; }
 		public delegate void OnInitialized();
@@ -23,12 +32,30 @@ namespace Elemento
 		public Transform _ringTip;
 		public Transform _pinkyTip;
 
-		public float wristPointsForward => Mathf.Round(Vector3.Angle(hand.right, Camera.main.transform.forward) * 100) / 100f; // more zero is more forward
-		public float palmPointsUp => Mathf.Round(Vector3.Angle(Vector3.up, -hand.up) * 100) / 100f; // more zero is more palm up toward sky
-		public float palmFaceRight => Mathf.Round(Vector3.Angle(hand.right, Camera.main.transform.right) * 100) / 100f; // more zero means LEFT hand faces right
-		public float wristPointsUp => Mathf.Round(Vector3.Angle(Vector3.up, hand.right) * 100) / 100f; // more zero is forearm point toward sky
+		// For wrist forward, hand.right is inversted for left vs right hand
+		public float wristPointsForward => handType == HandType.Left ? 
+			Mathf.Round(Vector3.Angle(hand.right, hand.position - Camera.main.transform.position) * 100) / 100f
+			: Mathf.Round(Vector3.Angle(-hand.right, hand.position - Camera.main.transform.position) * 100) / 100f; // more zero is more forward
 
+		public float palmPointsUp => handType == HandType.Left ? 
+			Mathf.Round(Vector3.Angle(Vector3.up, -hand.up) * 100) / 100f
+			: Mathf.Round(Vector3.Angle(Vector3.up, hand.up) * 100) / 100f; // more zero is more palm up toward sky
+
+		public float palmFaceRight => handType == HandType.Left ? 
+			Mathf.Round(Vector3.Angle(hand.right, Camera.main.transform.right) * 100) / 100f
+			: Mathf.Round(Vector3.Angle(-hand.right, Camera.main.transform.right) * 100) / 100f; // more zero means LEFT hand faces right
+
+		// For wrist forward, hand.right is inversted for left vs right hand
+		public float wristPointsUp => handType == HandType.Left ? Mathf.Round(Vector3.Angle(Vector3.up, hand.right) * 100) / 100f
+			: Mathf.Round(Vector3.Angle(Vector3.up, -hand.right) * 100) / 100f; // more zero is forearm point toward sky
+
+		public float palmFacesCamera => handType == HandType.Left ? 
+			Mathf.Round(Vector3.Angle( Camera.main.transform.position - hand.position, hand.up) * 100) / 100f
+			: Mathf.Round(Vector3.Angle(Camera.main.transform.position - hand.position, -hand.up) * 100) / 100f;
 		public Pose CurrentPose = new Pose();
+
+		public Vector3 PalmForwardDirection => handType == HandType.Left ? hand.up : -hand.up;
+		public Vector3 WristForwardDirection => handType == HandType.Left ? hand.right : -hand.right;
 
 		public Joint GetJoint(Finger f, int index)
 		{
@@ -92,6 +119,7 @@ namespace Elemento
 			CurrentPose.palmPointsUp = palmPointsUp;
 			CurrentPose.palmFaceRight = palmFaceRight;
 			CurrentPose.wristPointsUp = wristPointsUp;
+			CurrentPose.palmFaceCamera = palmFacesCamera;
 
 			CurrentPose.thumbToIndex = GetTipDistance(Finger.Thumb, Finger.Index);
 			CurrentPose.thumbToMiddle = GetTipDistance(Finger.Thumb, Finger.Middle);
@@ -100,6 +128,36 @@ namespace Elemento
 			CurrentPose.betweenTipsIndexMiddle = GetTipDistance(Finger.Index, Finger.Middle);
 			CurrentPose.betweenTipsMiddleRing = GetTipDistance(Finger.Middle, Finger.Ring);
 			CurrentPose.betweenTipsRingPinky = GetTipDistance(Finger.Ring, Finger.Pinky);
+
+			// debug
+			if (Input.GetKeyDown(KeyCode.R))
+			{
+				var i = 0;
+				var s = "";
+				CurrentPose.Values.ToList().ForEach(x => s += Pose.ValueLabels[i++] + ": " + x.ToString() + "f,\n");
+				s.TrimEnd(',');
+				Debug.Log("<color=#008>RECORDED:</color>: " + Time.time);
+				Debug.Log(s);
+				Utils2.SpellDebug("Recorded pose");
+
+			}
+
+			if (Input.GetKeyDown(KeyCode.P))
+			{
+				var i = 0;
+				var s = "";
+				Spells.forcePushStart.Values.ToList().ForEach(x => s += Pose.ValueLabels[i++] + ": " + x.ToString() + "f,\n");
+				s.TrimEnd(',');
+				Debug.Log("<color=#008>FP START:</color>: " + Time.time);
+				Debug.Log(s);
+
+				i = 0;
+				s = "";
+				Spells.forcePushEnd.Values.ToList().ForEach(x => s += Pose.ValueLabels[i++] + ": " + x.ToString() + "f,\n");
+				s.TrimEnd(',');
+				Debug.Log("<color=#008>FP END:</color>: " + Time.time);
+				Debug.Log(s);
+			}
 		}
 
 		

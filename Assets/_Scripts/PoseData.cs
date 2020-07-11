@@ -42,6 +42,7 @@ namespace Elemento
 			public float wristPointsUp;
 			public float palmFaceRight;
 			public float palmPointsUp;
+            public float palmFaceCamera;
 
 			public Pose(float[] values)
 			{
@@ -64,15 +65,37 @@ namespace Elemento
 				wristPointsUp = values[16];
 				palmFaceRight = values[17];
 				palmPointsUp = values[18];
+				palmFaceCamera = values[19];
 			}
 
-			public static string[] ValueLabels = new string[] { "_thumbToIndex", "_thumbToMiddle", "_thumbToRing", "_thumbToPinky", "_betweenTipsIndexMiddle", "_betweenTipsMiddleRing", "_betweenTipsRingPinky", "_indexFirstJoint", "_indexTotal", "_middleFirstJoint", "_middleTotal", "_ringFirstJoint", "_ringTotal", "_pinkyFirstJoint", "_pinkyTotal", "_wristPointsForward", "_wristPointsUp", "_palmFaceRight", "_palmPointsUp" };
+			public static string[] ValueLabels = new string[] { 
+				"_thumbToIndex", 
+				"_thumbToMiddle",
+				"_thumbToRing",
+				"_thumbToPinky",
+				"_betweenTipsIndexMiddle",
+				"_betweenTipsMiddleRing",
+				"_betweenTipsRingPinky",
+				"_indexFirstJoint",
+				"_indexTotal",
+				"_middleFirstJoint",
+				"_middleTotal",
+				"_ringFirstJoint",
+				"_ringTotal",
+				"_pinkyFirstJoint",
+				"_pinkyTotal",
+				"_wristPointsForward",
+				"_wristPointsUp",
+				"_palmFaceRight",
+				"_palmPointsUp",
+				"_palmFaceCamera"
+			};
 
 			public Pose(float _thumbToIndex = 0, float _thumbToMiddle = 0, float _thumbToRing = 0, float _thumbToPinky = 0, float _betweenTipsIndexMiddle = 0,
 				float _betweenTipsMiddleRing = 0, float _betweenTipsRingPinky = 0, float _indexFirstJoint = 0, float _indexTotal = 0,
 				float _middleFirstJoint = 0, float _middleTotal = 0, float _ringFirstJoint = 0, float _ringTotal = 0,
 				float _pinkyFirstJoint = 0, float _pinkyTotal = 0, float _wristPointsForward = 0, float _wristPointsUp = 0,
-				float _palmFaceRight = 0, float _palmPointsUp = 0)
+				float _palmFaceRight = 0, float _palmPointsUp = 0, float _palmFaceCamera = 0)
 			{
 				thumbToIndex = _thumbToIndex;
 				thumbToMiddle = _thumbToMiddle;
@@ -93,6 +116,7 @@ namespace Elemento
 				wristPointsUp = _wristPointsUp;
 				palmFaceRight = _palmFaceRight;
 				palmPointsUp = _palmPointsUp;
+				palmFaceCamera = _palmFaceCamera;
 			}
 
 
@@ -116,7 +140,8 @@ namespace Elemento
 				wristPointsForward,
 				wristPointsUp,
 				palmFaceRight,
-				palmPointsUp
+				palmPointsUp,
+				palmFaceCamera
 			};
 		}
 

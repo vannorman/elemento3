@@ -62,6 +62,9 @@ namespace Elemento
 		{
 
 			completedCutoff = spellCompleted ? int.MaxValue : newIndex;
+			//spell = spellcastListener.GetSpellData();
+			//if (spell.currentSpell != null)
+			//Utils2.SpellDebug("Update: " + spellcastListener.GetSpellData().currentSpell.name + ", newindex:" + newIndex);
 			//Debug.Log("<color=#090><b>New seq:</b></color>:" + newIndex);
 			// update checkmark graphics.
 			checkmarks.ForEach(x => Destroy(x));

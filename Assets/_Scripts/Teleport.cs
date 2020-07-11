@@ -38,7 +38,7 @@ public class Teleport : MonoBehaviour
 
 	bool teleporting = true;
 	bool canTeleportHere = false;
-	public float maxVert = 10;
+	float maxVert = 999;
 	// Update is called once per frame
     void Update()
     {
@@ -53,7 +53,6 @@ public class Teleport : MonoBehaviour
 				cameraFwd.Rotate(Camera.main.transform.right, 5); // look down a smidge
 				var lookDir = cameraFwd.forward;
 				Destroy(cameraFwd.gameObject);
-				maxVert = 2f;
 				if (Physics.Raycast(new Ray(Camera.main.transform.position, lookDir), out var hit))
 				{
 					target.transform.position = hit.point;
@@ -157,7 +156,7 @@ public class Teleport : MonoBehaviour
 	public float angleIncreaseA = 0.1f;
 	public float stepAmount = .2f;
 	public float zOffsetDeg = 10;
-	public float maxDist = 100;
+	private float maxDist = 999;
 
 	public static void CancelStatic() { inst.Cancel();  }
 	internal void Cancel()

@@ -119,16 +119,16 @@ namespace Elemento
 			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
 				var i = 0;
-				target.GetComponentsInChildren<Text>().ToList().ForEach(x => x.text = brandonTeleportStartP.Values[i++].ToString());
-				targetDebug = brandonTeleportStartP;
+				target.GetComponentsInChildren<Text>().ToList().ForEach(x => x.text = teleportStart.Values[i++].ToString());
+				targetDebug = teleportStart;
 			}
 
 
 			if (Input.GetKeyDown(KeyCode.Alpha2))
 			{
 				var i = 0;
-				target.GetComponentsInChildren<Text>().ToList().ForEach(x => x.text = brandonTeleportEndP.Values[i++].ToString());
-				targetDebug = brandonTeleportEndP;
+				target.GetComponentsInChildren<Text>().ToList().ForEach(x => x.text = teleportExecute.Values[i++].ToString());
+				targetDebug = teleportExecute;
 			}
 			DrawLinesAndDistancesBetweenFingertips();
 			DrawAngleAmountsOnKnuckles();

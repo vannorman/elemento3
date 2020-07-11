@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public static class Utils2
@@ -35,6 +36,15 @@ public static class Utils2
 		}
 	}
 
+	[MenuItem("Edit/Editor Tools/Set Local Rotation To Zero %y")]
+	public static void SetLocalRotationToZero()
+	{
+		foreach (GameObject o in Selection.gameObjects)
+		{
+			o.transform.localRotation = Quaternion.identity;
+		}
+	}
+
 	[MenuItem("Edit/Editor Tools/Group Items %e")]
 	public static void GroupItems()
 	{
@@ -59,7 +69,25 @@ public static class Utils2
 		/// Selection.gameObjects.Count;
 	}
 
-	[MenuItem("Edit/Editor Tools/DeClump Items #%w")]
+
+	static Text debugOut;
+    internal static void SpellDebug(string v)
+    {
+		if (!debugOut) debugOut = GameObject.FindObjectOfType<DebugOut>()?.GetComponent<Text>();
+		if (!debugOut) return;
+		debugOut.text += "\n"+v;
+		var lines = debugOut.text.Split('\n');
+		var maxLines = 20;
+		if (lines.Length > maxLines)
+		{
+			// trim top if excess
+			var lines2 = lines.ToList().Skip(1).ToArray();
+			var lines2string = string.Join("\n", lines2);
+			debugOut.text = lines2string;
+		}
+    }
+
+    [MenuItem("Edit/Editor Tools/DeClump Items #%w")]
 	public static void DeClumpItems()
 	{
 		var avg = Vector3.zero;
@@ -126,7 +154,19 @@ public static class Utils2
 
 	public static Vector3 FlattenVector(Vector3 a)
 	{
-		return new Vector3(a.x, 0, a.y);
+		return new Vector3(a.x, 0, a.z);
 	}
-	#endregion
+
+    internal static void DebugSphere(Vector3 p, float scale, Color color)
+    {
+		var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		s.transform.position = p;
+		s.transform.localScale = Vector3.one * scale;
+		s.GetComponent<Renderer>().material.color = color;
+		GameObject.Destroy(s.GetComponent<Collider>());
+		var tod = s.AddComponent<TimedObjectDestructor>();
+		tod.DestroyAfterSeconds(5);
+
+    }
+    #endregion
 }

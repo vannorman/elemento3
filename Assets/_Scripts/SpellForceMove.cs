@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OVRTouchSample;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,12 +24,13 @@ namespace Elemento
 		private List<GameObject> selected = new List<GameObject>();
 		private GameObject target;
 		public float force = 500f;
-		public Transform castingHand;
+		public HandPoseTracker castingHandTracker;
 		public float radius = 2.1f;
 		public float range = 15f;
 		public float coneAngle = 30;
 		public float wristAngleOffset = -30;
 		GameObject overlapArea;
+		public Material grabEffectMaterial;
 
 		public static SpellForceMove Instance { get; private set; }
 
@@ -44,9 +46,8 @@ namespace Elemento
             td.onTriggerExited += TriggerExited;
 			overlapArea.AddComponent<Rigidbody>();
 			overlapArea.GetComponent<Rigidbody>().useGravity = false;
-            //overlapArea.GetComponent<Renderer>().enabled = false;
-			overlapArea.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-			overlapArea.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.2f);
+			//overlapArea.GetComponent<Renderer>().enabled = false;
+			overlapArea.GetComponent<Renderer>().material = grabEffectMaterial;
 			var follow = overlapArea.AddComponent<SmoothFollow>();
 			follow.Init(_target: target.transform, _speed: 50);
 		}
@@ -76,24 +77,23 @@ namespace Elemento
 			selected.Remove(go);
 		}
 
-		private void DetectCastingHand()
-		{
-			//castingHand =  FindObjectsOfType<SpellCastListener>().ToList().Where(x => x.GetSpellData().currentSpell != null && x.GetSpellData().currentSpell == Spells.ForceMove).FirstOrDefault()?.hand.hand.transform;
-		}
 
-		public void SetState(State newState)
+
+		public void SetState(State newState, HandPoseTracker hand)
 		{
-			DetectCastingHand();
+			castingHandTracker = hand;
 
 			state = newState;
 			switch (state)
 			{
 				case State.SelectAndHighlight:
-					//
+					overlapArea.SetActive(true);
 					break;
 				case State.Moving:
+					overlapArea.SetActive(true);
 					break;
 				case State.Ready:
+					overlapArea.SetActive(false);
 					ClearSelected();
 					break;
 			}
@@ -106,7 +106,7 @@ namespace Elemento
 			switch (state)
 			{
 				case State.SelectAndHighlight:
-					target.transform.position = castingHand.position + castingHand.right * range / 2f;
+					target.transform.position = castingHandTracker.hand.position + castingHandTracker.WristForwardDirection * range / 2f;
 					//t -= Time.deltaTime;
 					//if (t < 0)
 					//{
@@ -122,7 +122,7 @@ namespace Elemento
 					//}
 					break;
 				case State.Moving:
-					target.transform.position = castingHand.position + castingHand.right * range / 2f;
+					target.transform.position = castingHandTracker.hand.position + castingHandTracker.WristForwardDirection * range / 2f;
 					selected.ForEach(x => x.GetComponent<Rigidbody>().AddForce((target.transform.position - x.transform.position).normalized * force));
 					break;
 				default: break;
@@ -150,6 +150,10 @@ namespace Elemento
 			qo.OutlineColor = Color.green;
 		}
 
-
-	}
+        public void Cancel()
+        {
+			
+			SetState(SpellForceMove.State.Ready, null);
+		}
+    }
 }
