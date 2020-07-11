@@ -25,11 +25,11 @@ namespace Elemento
 
 		public Transform current;
 
-		public ButtonController prevSpell;
-		public ButtonController nextSpell;
-		public ButtonController timeModeInfiniteButton;
+        public ButtonController prevSpell;
+        public ButtonController nextSpell;
+        public ButtonController timeModeInfiniteButton;
 
-		public Spell targetSpell;
+        public Spell targetSpell;
 		public Text targetSpellText;
 		int targetIndex = 0;
 
@@ -62,7 +62,7 @@ namespace Elemento
 		{
 
 			completedCutoff = spellCompleted ? int.MaxValue : newIndex;
-			Debug.Log("<color=#090><b>New seq:</b></color>:" + newIndex);
+			//Debug.Log("<color=#090><b>New seq:</b></color>:" + newIndex);
 			// update checkmark graphics.
 			checkmarks.ForEach(x => Destroy(x));
 			checkmarks.Clear();
@@ -177,7 +177,7 @@ namespace Elemento
 		void Update()
 		{
 			UpdatePoseText(current, handPoseTracker.CurrentPose);
-			Debug.Log("curpose index first;" + handPoseTracker.CurrentPose.thumbToIndex);
+			//Debug.Log("curpose index first;" + handPoseTracker.CurrentPose.thumbToIndex);
 			UpdateDeltaPoseTexts();
 
 

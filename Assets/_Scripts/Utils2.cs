@@ -16,6 +16,7 @@ public static class Utils2
 				select x.gameObject).FirstOrDefault()?.transform;
 	}
 
+#if UNITY_EDITOR
 	[MenuItem("Edit/Editor Tools/Set Local Position To Zero %#y")]
 	public static void SetLocalPositionToZero()
 	{
@@ -33,7 +34,6 @@ public static class Utils2
 			o.transform.localRotation = Quaternion.identity;
 		}
 	}
-
 
 	[MenuItem("Edit/Editor Tools/Group Items %e")]
 	public static void GroupItems()
@@ -68,6 +68,7 @@ public static class Utils2
 		Selection.gameObjects.ToList().ForEach(x => { x.transform.position -= (avg - x.transform.position).normalized; });
 		/// Selection.gameObjects.Count;
 	}
+#endif
 
 	public static Color Purple
 
