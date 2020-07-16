@@ -15,19 +15,23 @@ namespace Elemento
 	public class SpellDebugger : MonoBehaviour
 	{
 		public SpellCastListener spellcastListener;
-		public HandPoseTracker handPoseTracker;
+		public HandPoseTracker handPoseTrackerLeft;
+		public HandPoseTracker handPoseTrackerRight;
+		private HandPoseTracker handPoseTracker;
 		public Text spellName;
 		public Text totalPoses;
 		public Text spellIndex;
 		public Text spellTime;
 
 		public Text timeMode;
+		public Text leftRightLabel;
 
 		public Transform current;
 
         public ButtonController prevSpell;
         public ButtonController nextSpell;
         public ButtonController timeModeInfiniteButton;
+		public ButtonController leftRightSwap;
 
         public Spell targetSpell;
 		public Text targetSpellText;
@@ -43,9 +47,12 @@ namespace Elemento
 		// Start is called before the first frame update
 		void Start()
 		{
+			handPoseTracker = handPoseTrackerLeft;
 			nextSpell.InteractableStateChanged.AddListener(NextSpell);
 			prevSpell.InteractableStateChanged.AddListener(PreviousSpell);
 			timeModeInfiniteButton.InteractableStateChanged.AddListener(ToggleTimeMode);
+
+			//leftRightSwap.InteractableStateChanged.AddListener(LeftRightSwap);
 
 			handPoseTracker.onInitialized += UpdateTargetSpell;
 
@@ -53,6 +60,16 @@ namespace Elemento
 
 		}
 
+		private void LeftRightSwap(InteractableStateArgs obj)
+		{
+			if (obj.NewInteractableState == InteractableState.ActionState)
+			{
+				handPoseTracker = handPoseTracker == handPoseTrackerLeft ? handPoseTrackerRight : handPoseTrackerLeft;
+				leftRightLabel.text = handPoseTrackerLeft == handPoseTrackerLeft ? "Left Hand" : "Right Hand";
+
+			}
+		}
+		
 		private void SpellCastCompleted()
 		{
 			UpdateSpellProgressIndicator(true);
@@ -90,7 +107,7 @@ namespace Elemento
 		List<GameObject> deltasMeters = new List<GameObject> ();
 		void UpdateTargetSpell()
 		{
-			targetSpell = spells[targetIndex];
+			targetSpell = availableSpells[targetIndex];
 			targetSpellText.text = targetSpell.name;
 			
 			// Clear old chekcmark progress, create new empty checkboxes for sequence progress
@@ -152,7 +169,7 @@ namespace Elemento
 			{
 
 				targetIndex++;
-				if (targetIndex >= spells.Count)
+				if (targetIndex >= availableSpells.Count)
 				{
 					targetIndex = 0;
 				}
@@ -167,7 +184,7 @@ namespace Elemento
 				targetIndex--;
 				if (targetIndex < 0)
 				{
-					targetIndex = spells.Count - 1;
+					targetIndex = availableSpells.Count - 1;
 				}
 				UpdateTargetSpell();
 			}
@@ -179,6 +196,7 @@ namespace Elemento
 		// Update is called once per frame
 		void Update()
 		{
+			if (!handPoseTracker) return;
 			UpdatePoseText(current, handPoseTracker.CurrentPose);
 			//Debug.Log("curpose index first;" + handPoseTracker.CurrentPose.thumbToIndex);
 			UpdateDeltaPoseTexts();

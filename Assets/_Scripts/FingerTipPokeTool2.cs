@@ -71,7 +71,6 @@ namespace OculusSampleFramework
 		private float _lastScale = 1.0f;
 		private bool _isInitialized = false;
 		private OVRBoneCapsule _capsuleToTrack;
-		private Transform _tipToTrack;
 
 		public override void Initialize()
 		{
@@ -93,42 +92,51 @@ namespace OculusSampleFramework
 				yield return null;
 			}
 
-			//OVRSkeleton.BoneId boneToTestCollisions = OVRSkeleton.BoneId.Hand_Pinky3;
-			//switch (_fingerToFollow)
-			//{
-			//	case OVRPlugin.HandFinger.Thumb:
-			//		boneToTestCollisions = OVRSkeleton.BoneId.Hand_Index3;
-			//		break;
-			//	case OVRPlugin.HandFinger.Index:
-			//		boneToTestCollisions = OVRSkeleton.BoneId.Hand_Index3;
-			//		break;
-			//	case OVRPlugin.HandFinger.Middle:
-			//		boneToTestCollisions = OVRSkeleton.BoneId.Hand_Middle3;
-			//		break;
-			//	case OVRPlugin.HandFinger.Ring:
-			//		boneToTestCollisions = OVRSkeleton.BoneId.Hand_Ring3;
-			//		break;
-			//	default:
-			//		boneToTestCollisions = OVRSkeleton.BoneId.Hand_Pinky3;
-			//		break;
-			//}
-			List<BoneCapsuleTriggerLogic> boneCapsuleTriggerLogic = new List<BoneCapsuleTriggerLogic>();
-			_tipToTrack = IsRightHandedTool ? HandsManager.Instance.LeftHand.transform.FindInChildren("Hand_IndexTip") : HandsManager.Instance.RightHand.transform.FindInChildren("Hand_IndexTip");
+			OVRSkeleton handSkeleton = IsRightHandedTool ? HandsManager.Instance.RightHandSkeleton : HandsManager.Instance.LeftHandSkeleton;
 
-			var boneCapsuleTrigger = _tipToTrack.gameObject.AddComponent<BoneCapsuleTriggerLogic>();
-			//var ovrCapsuleInfo = _tipToTrack.gameObject.AddComponent<OVRBoneCapsule>();
-			//ovrCapsuleInfo.CapsuleCollider.isTrigger = true;
-			//boneCapsuleTrigger.ToolTags = ToolTags;
-			//boneCapsuleTriggerLogic.Add(boneCapsuleTrigger);
-			
+			OVRSkeleton.BoneId boneToTestCollisions = OVRSkeleton.BoneId.Hand_Pinky3;
+			switch (_fingerToFollow)
+			{
+				case OVRPlugin.HandFinger.Thumb:
+					boneToTestCollisions = OVRSkeleton.BoneId.Hand_Index3;
+					break;
+				case OVRPlugin.HandFinger.Index:
+					boneToTestCollisions = OVRSkeleton.BoneId.Hand_Index3;
+					break;
+				case OVRPlugin.HandFinger.Middle:
+					boneToTestCollisions = OVRSkeleton.BoneId.Hand_Middle3;
+					break;
+				case OVRPlugin.HandFinger.Ring:
+					boneToTestCollisions = OVRSkeleton.BoneId.Hand_Ring3;
+					break;
+				default:
+					boneToTestCollisions = OVRSkeleton.BoneId.Hand_Pinky3;
+					break;
+			}
+
+			List<BoneCapsuleTriggerLogic> boneCapsuleTriggerLogic = new List<BoneCapsuleTriggerLogic>();
+			List<OVRBoneCapsule> boneCapsules = HandsManager.GetCapsulesPerBone(handSkeleton, boneToTestCollisions);
+			foreach (var ovrCapsuleInfo in boneCapsules)
+			{
+				var boneCapsuleTrigger = ovrCapsuleInfo.CapsuleRigidbody.gameObject.AddComponent<BoneCapsuleTriggerLogic>();
+				ovrCapsuleInfo.CapsuleCollider.isTrigger = true;
+				boneCapsuleTrigger.ToolTags = ToolTags;
+				boneCapsuleTriggerLogic.Add(boneCapsuleTrigger);
+			}
 
 			_boneCapsuleTriggerLogic = boneCapsuleTriggerLogic.ToArray();
+			// finger tip should have only one capsule
+			if (boneCapsules.Count > 0)
+			{
+				_capsuleToTrack = boneCapsules[0];
+			}
+
 			_isInitialized = true;
 		}
 
 		private void Update()
 		{
-			if (!HandsManager.Instance || !HandsManager.Instance.IsInitialized() || !_isInitialized || _tipToTrack == null)
+			if (!HandsManager.Instance || !HandsManager.Instance.IsInitialized() || !_isInitialized || _capsuleToTrack == null)
 			{
 				return;
 			}
@@ -136,11 +144,16 @@ namespace OculusSampleFramework
 			OVRHand hand = IsRightHandedTool ? HandsManager.Instance.RightHand : HandsManager.Instance.LeftHand;
 			float currentScale = hand.HandScale;
 			// push tool into the tip based on how wide it is. so negate the direction
-			Vector3 trackedPosition = _tipToTrack.position;
-
+			Transform capsuleTransform = _capsuleToTrack.CapsuleCollider.transform;
+			Vector3 capsuleDirection = capsuleTransform.right;
+			Vector3 trackedPosition = capsuleTransform.position + _capsuleToTrack.CapsuleCollider.height * 0.5f
+			  * capsuleDirection;
+			Vector3 sphereRadiusOffset = currentScale * _fingerTipPokeToolView.SphereRadius *
+			  capsuleDirection;
 			// push tool back so that it's centered on transform/bone
-			Vector3 toolPosition = trackedPosition;
+			Vector3 toolPosition = trackedPosition + sphereRadiusOffset;
 			transform.position = toolPosition;
+			transform.rotation = capsuleTransform.rotation;
 			InteractionPosition = trackedPosition;
 
 			UpdateAverageVelocity();

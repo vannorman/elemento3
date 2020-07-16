@@ -10,6 +10,7 @@ namespace Elemento
 	using UnityEngine.UI;
 	using System;
     using OVRTouchSample;
+    using System.Linq;
 
     public class SpellCastListener : MonoBehaviour
 	{
@@ -47,15 +48,17 @@ namespace Elemento
 
 		List<CurrentHand> hands = new List<CurrentHand>();
 
+
 		private void DetectSpellcast()
 		{
 
 			foreach (var currentHand in hands)
 			{
-				foreach (var spell in spells)
+				foreach (var spell in availableSpells)
 				{
 					// Initiate or lock a spell to begin casting
-					if (PoseWithinTolerance(currentHand.hand.CurrentPose, spell.sequence[0].pose, spell.sequence[0].tolerance))
+					if (AnyPoseWithinTolerance(currentHand.hand.CurrentPose, spell.sequence[0].poses, spell.sequence[0].tolerance))
+						//if (PoseWithinTolerance(currentHand.hand.CurrentPose, spell.sequence[0].pose, spell.sequence[0].tolerance))
 					{
 						if (currentHand.spell == null || (currentHand.spell != null && currentHand.spell != spell))
 						{
@@ -77,30 +80,52 @@ namespace Elemento
 				
 				if (currentHand.castingSpellState && currentHand.spell != null)
 				{
-					// We've already achieved the first state of the spell, and will now listen for the next item in the sequence.
+
+
+					var curSeq = currentHand.spell.sequence[currentHand.seqInd];
+
+					// Invoke spell every frame if desired
+					if (curSeq.invokeOptions == PoseSequenceItem.InvokeOptions.WhilePoseMaintained && AnyPoseWithinTolerance(currentHand.hand.CurrentPose, curSeq.poses, curSeq.tolerance))
+					{
+						curSeq.action.Invoke(currentHand.hand);
+					}
+
+					// If starting pose is not held, advance spell time.
 
 					if (!PoseWithinTolerance(currentHand.hand.CurrentPose, currentHand.spell.sequence[0].pose, currentHand.spell.sequence[0].tolerance))
 					{
-						// If the user's hand is still matching the first item, do not increase the time. Only increase the spell time if user breaks pose from the initiator pose.
 						currentHand.spellTime += Time.deltaTime;
 						Utils2.SpellDebug("adding time to " + currentHand.spell.name + ": "+currentHand.spellTime+" / "+currentHand.spell.sequence[currentHand.seqInd].time);
 					}
 
+					// If starting pose is (re)acquired, set spell time to zero.
 					if (PoseWithinTolerance(currentHand.hand.CurrentPose, currentHand.spell.sequence[0].pose, currentHand.spell.sequence[0].tolerance))
 					{
-						// If the user's hand is still matching the first item, do not increase the time. Only increase the spell time if user breaks pose from the initiator pose.
 						currentHand.spellTime = 0;
-						//Utils2.SpellDebug("reset time to zero " + currentHand.spell.name + " because pose 0 in tolerance.");
 					}
 
-					if (currentHand.spell.sequence[currentHand.seqInd].breakPoseCancels 
-						&& !PoseWithinTolerance(
-							currentHand.hand.CurrentPose, currentHand.spell.sequence[currentHand.seqInd].pose, 
-							currentHand.spell.sequence[currentHand.seqInd].tolerance))
+					// if pose was broken, cancel spell if desired
+					//if (curSeq.poseCancelType == PoseSequenceItem.CancelOptions.BreakPoseCancels || curSeq.poseCancelType == PoseSequenceItem.CancelOptions.BreakOrAcquirePoseCancels 
+					//	&& !AnyPoseWithinTolerance(
+					//		currentHand.hand.CurrentPose, curSeq.poses, 
+					//		curSeq.tolerance, true))
+					//{
+					//	CancelCurrentSpell(currentHand, "pose was broken for seq ind:"+currentHand.seqInd);
+					//	return;
+					//}
+					if (curSeq.poseCancelType == PoseSequenceItem.CancelOptions.BreakPoseCancels || curSeq.poseCancelType == PoseSequenceItem.CancelOptions.BreakOrAcquirePoseCancels)
 					{
-						CancelCurrentSpell(currentHand, "pose was broken");
-						return;
+						//if (!PoseWithinTolerance(currentHand.hand.CurrentPose, curSeq.pose, curSeq.tolerance))
+						//{
+						//	Utils2.SpellDebug("not in tolerance! "+currentHand.seqInd);
+						//}
+						if (!AnyPoseWithinTolerance(currentHand.hand.CurrentPose, curSeq.poses, curSeq.tolerance))
+						{ 
+							Utils2.SpellDebug("any pose not in tolerance! "+currentHand.seqInd);
+							CancelCurrentSpell(currentHand, "broke tolerance");
+						}
 					}
+
 
 					if (currentHand.spellTime > currentHand.spell.sequence[currentHand.seqInd].time && !timeModeInfinite)
 					{
@@ -127,9 +152,23 @@ namespace Elemento
 			}
 		}
 
+        private bool AnyPoseWithinTolerance(Pose currentPose, List<Pose> poses, Pose tolerance)
+        {
+			foreach (var pose in poses)
+			{
+				if (PoseWithinTolerance(currentPose, pose, tolerance))
+				{
+					return true;
+				}
+			}
+
+			return false;
+        }
+
         private void CancelCurrentSpell(CurrentHand currentHand, string reason)
         {
 			Utils2.SpellDebug("Canceled " + currentHand.spell.name + ": " + reason);
+			Debug.Log("Canceled;" + reason);
 			//spellIdentifier.text = "Lost spell (time):" + currentSpell.name;
 			currentHand.spell.cancelAction?.Invoke(currentHand.hand);
 			currentHand.spell = null;

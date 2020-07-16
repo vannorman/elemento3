@@ -16,6 +16,95 @@ namespace Elemento
 
     public static class Spells
 	{
+		public static Pose laserEyeStartA = new Pose(
+			_thumbToIndex: 0.06f,
+			_thumbToMiddle: 0.15f,
+			_thumbToRing: 0.17f,
+			_thumbToPinky: 0.18f,
+			_betweenTipsIndexMiddle: 0.09f,
+			_betweenTipsMiddleRing: 0.04f,
+			_betweenTipsRingPinky: 0.05f,
+			_indexFirstJoint: -54f,
+			_indexTotal: -72f,
+			_middleFirstJoint: -11f,
+			_middleTotal: -18f,
+			_ringFirstJoint: 10f,
+			_ringTotal: -3f,
+			_pinkyFirstJoint: 23f,
+			_pinkyTotal: 9f,
+			_wristPointsForward: 117.89f,
+			_wristPointsUp: 19.53f,
+			_palmFaceRight: 67.58f,
+			_palmPointsUp: 73.51f,
+			_palmFaceCamera: 100.56f
+		);
+		public static Pose laserEyeStartB = new Pose(
+			_thumbToIndex: 0.05f,
+			_thumbToMiddle: 0.12f,
+			_thumbToRing: 0.14f,
+			_thumbToPinky: 0.15f,
+			_betweenTipsIndexMiddle: 0.07f,
+			_betweenTipsMiddleRing: 0.03f,
+			_betweenTipsRingPinky: 0.05f,
+			_indexFirstJoint: -57f,
+			_indexTotal: -67f,
+			_middleFirstJoint: -19f,
+			_middleTotal: -35f,
+			_ringFirstJoint: -6f,
+			_ringTotal: -37f,
+			_pinkyFirstJoint: 12f,
+			_pinkyTotal: -20f,
+			_wristPointsForward: 112.49f,
+			_wristPointsUp: 27.88f,
+			_palmFaceRight: 115.18f,
+			_palmPointsUp: 114.73f,
+			_palmFaceCamera: 95.95f
+
+		);
+		public static Pose laserEyeStartC = new Pose(
+			_thumbToIndex: 0.1f,
+			_thumbToMiddle: 0.17f,
+			_thumbToRing: 0.18f,
+			_thumbToPinky: 0.17f,
+			_betweenTipsIndexMiddle: 0.08f,
+			_betweenTipsMiddleRing: 0.04f,
+			_betweenTipsRingPinky: 0.06f,
+			_indexFirstJoint: -36f,
+			_indexTotal: -39f,
+			_middleFirstJoint: -4f,
+			_middleTotal: -4f,
+			_ringFirstJoint: 6f,
+			_ringTotal: 0f,
+			_pinkyFirstJoint: 15f,
+			_pinkyTotal: -7f,
+			_wristPointsForward: 94.96f,
+			_wristPointsUp: 61.48f,
+			_palmFaceRight: 35.75f,
+			_palmPointsUp: 30.12f,
+			_palmFaceCamera: 111.18f
+		);
+		public static Pose laserEyesTolerance = new Pose(
+			_thumbToIndex: 0.06f,
+			_thumbToMiddle: 0.04f,
+			_thumbToRing: 0.04f,
+			_thumbToPinky: 0.04f,
+			_betweenTipsIndexMiddle: 0.02f,
+			_betweenTipsMiddleRing: 0.02f,
+			_betweenTipsRingPinky: 0.02f,
+			_indexFirstJoint: 34f,
+			_indexTotal: 128f,
+			_middleFirstJoint: 36f,
+			_middleTotal: 125f,
+			_ringFirstJoint: 45f,
+			_ringTotal: 121f,
+			_pinkyFirstJoint: 50f,
+			_pinkyTotal: 129f,
+			_wristPointsForward: 34.36f,
+			_wristPointsUp: 45.01f,
+			_palmFaceRight: 31.9f,
+			_palmPointsUp: 34.09f,
+			_palmFaceCamera: 999
+			);
 		public static Pose tolerance_01 = new Pose(
 			_thumbToIndex: 0.02f,
 			_thumbToMiddle: 0.02f,
@@ -121,7 +210,7 @@ namespace Elemento
 
 
 		public static Pose forceMoveStart = new Pose(
-			_thumbToIndex: 0.1f,
+			_thumbToIndex: 0.2f,
 			_thumbToMiddle: 0.14f,
 			_thumbToRing: 0.14f,
 			_thumbToPinky: 0.15f,
@@ -165,7 +254,7 @@ namespace Elemento
 			_palmFaceCamera: 75
 			);
 		private static Pose forceMoveStartTolerance = new Pose(
-			_thumbToIndex: 0.05f,
+			_thumbToIndex: 0.03f,
 			_thumbToMiddle: 0.03f,
 			_thumbToRing: 0.03f,
 			_thumbToPinky: 0.03f,
@@ -254,10 +343,10 @@ namespace Elemento
 			_palmFaceCamera: 140f
 			);
 		public static Pose forcePushTolerance = new Pose(
-			_thumbToIndex: 0.09f,
-			_thumbToMiddle: 0.09f,
-			_thumbToRing: 0.09f,
-			_thumbToPinky: 0.09f,
+			_thumbToIndex: 0.03f,
+			_thumbToMiddle: 0.03f,
+			_thumbToRing: 0.03f,
+			_thumbToPinky: 0.03f,
 			_betweenTipsIndexMiddle: 0.02f,
 			_betweenTipsMiddleRing: 0.02f,
 			_betweenTipsRingPinky: 0.02f,
@@ -343,7 +432,8 @@ namespace Elemento
 		public class PoseSequenceItem
 		{
 			public float time;
-			public Pose pose;
+			public Pose pose => poses.FirstOrDefault();
+			public List<Pose> poses;
 			public Pose tolerance;
 			public Action<HandPoseTracker> action; // need to pass "which" hand was doing this sequenec.
 			public List<TonePosePair> tones;
@@ -357,19 +447,38 @@ namespace Elemento
 				BreakOrAcquirePoseCancels
 			}
 			public CancelOptions poseCancelType;
-			public PoseSequenceItem(float _time, Pose _pose, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, List<TonePosePair> _tones = null)
+
+			public enum InvokeOptions
+			{ 
+				OnceOnPoseAcquired,
+				WhilePoseMaintained
+			}
+			public InvokeOptions invokeOptions;
+			public PoseSequenceItem(float _time, List<Pose> _poses, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, InvokeOptions _invokeOptions = InvokeOptions.OnceOnPoseAcquired, List<TonePosePair> _tones = null)
 			{
 				time = _time;
-				pose = _pose;
+				poses = _poses;
 				tolerance = _tolerance;
 				action = _action;
 				tones = _tones;
 				poseCancelType = _poseCancelType;
+				invokeOptions = _invokeOptions;
+			}
+			public PoseSequenceItem(float _time, Pose _pose, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, InvokeOptions _invokeOptions = InvokeOptions.OnceOnPoseAcquired, List<TonePosePair> _tones = null)
+			{
+				time = _time;
+				poses = new List<Pose>() { _pose };
+				tolerance = _tolerance;
+				action = _action;
+				tones = _tones;
+				poseCancelType = _poseCancelType;
+				invokeOptions = _invokeOptions;
+
 			}
 			public PoseSequenceItem(float _time, Pose _pose)
 			{
 				time = _time;
-				pose = _pose;
+				poses = new List<Pose>() { _pose };
 				tolerance = tolerance_01;
 			}
 		}
@@ -434,13 +543,13 @@ namespace Elemento
 		}
 
 
-		static Spell Teleport
+		static Spell TeleportSpell
 		{
 			get
 			{
-                Action<HandPoseTracker> a1 = (HandPoseTracker currentHand) => global::Teleport.SetStateStatic(global::Teleport.State.ShowLine);
-                Action<HandPoseTracker> a2 = (HandPoseTracker currentHand) => global::Teleport.TeleportNowStatic();
-                Action<HandPoseTracker> cancelAction = (HandPoseTracker currentHand) => global::Teleport.CancelStatic();
+                Action<HandPoseTracker> a1 = (HandPoseTracker currentHand) => Teleport.SetStateStatic(global::Teleport.State.ShowLine);
+                Action<HandPoseTracker> a2 = (HandPoseTracker currentHand) => Teleport.TeleportNowStatic();
+                Action<HandPoseTracker> cancelAction = (HandPoseTracker currentHand) => Teleport.CancelStatic();
 				//var poseTones = new List<TonePosePair>
 				//{
 				//	new TonePosePair(Tone.A, 0, .05f), // thumb to index
@@ -451,7 +560,7 @@ namespace Elemento
 					"Teleport",
 					new List<PoseSequenceItem>()
 					{
-						new PoseSequenceItem( 0.5f, teleportStart, teleportTolerance, a1 ),
+						new PoseSequenceItem( 0.3f, teleportStart, teleportTolerance, a1 ),
 						new PoseSequenceItem( 0.5f, teleportExecute, teleportTolerance, a2, PoseSequenceItem.CancelOptions.AcquirePoseCancels ),
 					},
 					cancelAction
@@ -504,7 +613,7 @@ namespace Elemento
                     "Cube Fountain",
 					new List<PoseSequenceItem>()
 					{
-						new PoseSequenceItem(2, pullMatterFromGroundStart, tolerance_01),
+						new PoseSequenceItem(0.2f, pullMatterFromGroundStart, tolerance_01),
 						new PoseSequenceItem(2, pullMatterFromGroundTwo, tolerance_01),
 						new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, cubeFountain, PoseSequenceItem.CancelOptions.AcquirePoseCancels)
 					}
@@ -514,8 +623,37 @@ namespace Elemento
 		}
 
 
+		public static Spell LaserEyes
+		{
+			get
+			{
+				Action<HandPoseTracker> castLaserAction = (HandPoseTracker currentHand) =>
+				{
+					var pinchPosition = (currentHand._indexTip.position + currentHand._thumbTip.position) / 2f;
+					var widthBetweenFingers = (currentHand._indexTip.position - currentHand._thumbTip.position).magnitude;
+					LaserController.DrawLaser(pinchPosition, widthBetweenFingers);
+				};
+				Action<HandPoseTracker> cancelAction = (HandPoseTracker currentHand) =>
+				{
+					LaserController.Cancel();
+				};
+				return new Spell
+				(
+					"Laser Eyes",
+					new List<PoseSequenceItem>()
+					{
+						new PoseSequenceItem(.22f, new List<Pose>(){laserEyeStartA,laserEyeStartB,laserEyeStartC }, laserEyesTolerance, castLaserAction, PoseSequenceItem.CancelOptions.BreakPoseCancels, PoseSequenceItem.InvokeOptions.WhilePoseMaintained)
+						//new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, castLaser, PoseSequenceItem.CancelOptions.AcquirePoseCancels)
+					},
+					cancelAction
 
-		public static List<Spell> spells = new List<Spell> { forcePush,  Teleport, ForceMove, CubeFountain };
+				);
+			}
+		}
+
+
+
+		public static List<Spell> availableSpells = new List<Spell> { forcePush,  TeleportSpell, ForceMove, CubeFountain, LaserEyes };
 
 
 		// This tone pose pair indicators allow tones to manifest when certain pose metrics get within certain bounds.

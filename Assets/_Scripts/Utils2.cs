@@ -53,6 +53,7 @@ public static class Utils2
 		Selection.gameObjects.ToList().ForEach(x => { avg += x.transform.position; });
 		avg /= Selection.gameObjects.Length;
 		var g = new GameObject(Selection.gameObjects[0].name+ " group");
+		g.transform.position = avg;
 		Selection.gameObjects.ToList().ForEach((x => x.transform.SetParent(g.transform)));
 		Selection.activeGameObject = g;
 		Selection.activeGameObject.transform.parent = p;

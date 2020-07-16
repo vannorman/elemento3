@@ -11,6 +11,8 @@ public class AppearWhenFacingCamera : MonoBehaviour
 	public GameObject spellDebuggerPanel;
 	public ButtonController detachButton;
 
+	public Vector3 localRotationOnStart = Vector3.zero;
+
 	bool detachedState = false;
 	Vector3 startPos;
 	private float maxDistBeforeReattach = 2.5f;
@@ -19,7 +21,7 @@ public class AppearWhenFacingCamera : MonoBehaviour
 	{
 		// editor hack - we flipped it 180 to view in editor because default Oculus pose makes it upside down for editing
 		// so, flip it back during start lol
-		this.transform.localRotation = Quaternion.identity;
+		this.transform.localRotation = Quaternion.Euler(localRotationOnStart);
 
 		detachButton.InteractableStateChanged.AddListener(Detach);
 		startPos = spellDebuggerPanel.transform.localPosition;
