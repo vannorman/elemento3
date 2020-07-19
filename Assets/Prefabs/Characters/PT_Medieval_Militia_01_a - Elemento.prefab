@@ -2231,8 +2231,9 @@ GameObject:
   - component: {fileID: 8049007581372087762}
   - component: {fileID: 8049007581379498612}
   - component: {fileID: 8049007579589238734}
+  - component: {fileID: 775027556}
   m_Layer: 0
-  m_Name: PT_Medieval_Militia_01_a
+  m_Name: PT_Medieval_Militia_01_a - Elemento
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2285,7 +2286,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d485a895fea7cc24ba392b8ec49da7f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ragdoll: {fileID: 0}
+  ragdollPrefab: {fileID: 4737172087936654112, guid: 17bacbc6f251f4a4e861221d75c8473c,
+    type: 3}
+  visibleMesh: {fileID: 8049007581372112982}
+--- !u!136 &775027556
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8049007581372113394}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.25
+  m_Height: 1.72
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.89, z: 0}
 --- !u!1 &8049007581372113400
 GameObject:
   m_ObjectHideFlags: 0

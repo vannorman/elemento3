@@ -7,58 +7,120 @@ namespace Elemento
 
     public class AICharacter : MonoBehaviour
     {
-        public GameObject ragdoll;
-        Animator a => GetComponent<Animator>();
+        public GameObject ragdollPrefab;
+        Animator anim => GetComponent<Animator>();
         float runSpeed = 3;
-         
+
         public enum State
-        { 
-            Idle,
-            Walking,
-            Running,
-            Attacking,
-            Ragdoll,
-            Dead
+        {
+            Idle = 0,
+            Walking = 1,
+            Running = 2,
+            Attacking = 3,
+            Ragdoll = 4,
+            GetUpFrommFaceDown = 5,
+            GetUpFromFaceUp = 6,
+            Dead = 7
         }
         State state;
+        State stateAfterGetUp;
+
+        void ResumeSetStateAfterGetUp()
+        {
+            SetState(stateAfterGetUp);
+        }
         public void SetState(State newState)
         {
+            //if (state == newState) return;
+
+            if (state == State.Ragdoll && newState != State.Ragdoll) // old state was ragdoll, so get up
+            {
+                transform.position = ragdoll.transform.position;
+                transform.rotation = Quaternion.identity;
+                /// ragdoll.transform.rotation;
+                Destroy(ragdoll);
+                visibleMesh.SetActive(true);
+                if (Vector3.Angle(ragdoll.transform.GetChild(0).forward, Vector3.up) < 90)
+                {
+                    state = State.GetUpFromFaceUp;
+                    anim.SetInteger("LocomotionState",6);
+                    anim.SetTrigger("GetUpFromFaceUp");
+                    returnToIdle = true;
+                    returnToIdleAfterSeconds = 2f;
+
+
+                }
+                else
+                {
+                    state = State.GetUpFrommFaceDown;
+                    anim.SetInteger("LocomotionState", 6);
+                    anim.SetTrigger("GetUpFromFaceDown");
+                    returnToIdle = true;
+                    returnToIdleAfterSeconds = 2f;
+                }
+                return;
+            }
+
             state = newState;
+            switch (state)
+            {
+                case State.Ragdoll:
+                    ragdoll = Instantiate(ragdollPrefab, transform.position, transform.rotation);
+                    visibleMesh.SetActive(false);
+                    break;
+                case State.Idle:
+                    anim.SetInteger("LocomotionState", 0);
+                    break;
+                case State.Walking:
+                    anim.SetInteger("LocomotionState", 1);
+                    break;
+                case State.Running:
+                    anim.SetInteger("LocomotionState", 2);
+                    break;
+
+            }
         }
 
 
+
+        GameObject ragdoll;
+        public GameObject visibleMesh;
 
         // Start is called before the first frame update
         void Start()
         {
-        
+            
         }
 
-        public bool running = false;
+ 
         public void RunAway()
         {
-            a.SetInteger("LocomotionState", 2);
-            running = true;
+            SetState(State.Running);
         }
+
+
+
+        bool returnToIdle = false;
+        float returnToIdleAfterSeconds = 0f;
+
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Alpha0))
+            returnToIdleAfterSeconds -= Time.deltaTime;
+            if (returnToIdle && returnToIdleAfterSeconds < 0)
             {
-
-                a.SetInteger("LocomotionState", 0);
-            } else if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                a.SetInteger("LocomotionState", 1);
-            } else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                a.SetInteger("LocomotionState", 2);
-                running = true;
+                returnToIdle = false;
+                SetState(State.Idle);
             }
-            if (running)
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                transform.position += transform.forward * Time.deltaTime * runSpeed;
+                SetState(State.Ragdoll);
             }
+            else if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                SetState(State.Idle);
+            }
+            
         }
     }
 }

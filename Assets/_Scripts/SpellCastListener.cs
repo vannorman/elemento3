@@ -123,6 +123,7 @@ namespace Elemento
 						{ 
 							Utils2.SpellDebug("any pose not in tolerance! "+currentHand.seqInd);
 							CancelCurrentSpell(currentHand, "broke tolerance");
+							return;
 						}
 					}
 

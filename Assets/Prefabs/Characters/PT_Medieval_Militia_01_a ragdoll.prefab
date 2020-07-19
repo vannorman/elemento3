@@ -1988,9 +1988,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4737172087936616192}
   - component: {fileID: 4737172087944079526}
-  - component: {fileID: 4737172087051363612}
   m_Layer: 0
-  m_Name: PT_Medieval_Militia_01_a
+  m_Name: PT_Medieval_Militia_01_a ragdoll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2031,18 +2030,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &4737172087051363612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4737172087936654112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d485a895fea7cc24ba392b8ec49da7f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4737172087936654120
 GameObject:
   m_ObjectHideFlags: 0

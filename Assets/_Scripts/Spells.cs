@@ -16,28 +16,76 @@ namespace Elemento
 
     public static class Spells
 	{
-		public static Pose laserEyeStartA = new Pose(
-			_thumbToIndex: 0.06f,
-			_thumbToMiddle: 0.15f,
-			_thumbToRing: 0.17f,
-			_thumbToPinky: 0.18f,
-			_betweenTipsIndexMiddle: 0.09f,
-			_betweenTipsMiddleRing: 0.04f,
-			_betweenTipsRingPinky: 0.05f,
-			_indexFirstJoint: -54f,
-			_indexTotal: -72f,
-			_middleFirstJoint: -11f,
-			_middleTotal: -18f,
-			_ringFirstJoint: 10f,
-			_ringTotal: -3f,
-			_pinkyFirstJoint: 23f,
-			_pinkyTotal: 9f,
-			_wristPointsForward: 117.89f,
-			_wristPointsUp: 19.53f,
-			_palmFaceRight: 67.58f,
-			_palmPointsUp: 73.51f,
-			_palmFaceCamera: 100.56f
+
+
+		public static Pose pointForwardWalk = new Pose(
+			_thumbToIndex: 0.1f,
+			_thumbToMiddle: 0.06f,
+			_thumbToRing: 0.08f,
+			_thumbToPinky: 0.09f,
+			_betweenTipsIndexMiddle: 0.11f,
+			_betweenTipsMiddleRing: 0.02f,
+			_betweenTipsRingPinky: 0.02f,
+			_indexFirstJoint: -15f,
+			_indexTotal: -16f,
+			_middleFirstJoint: -64f,
+			_middleTotal: -228f,
+			_ringFirstJoint: -81f,
+			_ringTotal: -238f,
+			_pinkyFirstJoint: -87f,
+			_pinkyTotal: -233f,
+			_wristPointsForward: 57.12f,
+			_wristPointsUp: 105.35f,
+			_palmFaceRight: 54.87f,
+			_palmPointsUp: 15.64f,
+			_palmFaceCamera: 106.7f
 		);
+
+		public static Pose pointForwardWalkTolerance = new Pose(
+			_thumbToIndex: 0.06f,
+			_thumbToMiddle: 0.04f,
+			_thumbToRing: 0.04f,
+			_thumbToPinky: 0.04f,
+			_betweenTipsIndexMiddle: 0.02f,
+			_betweenTipsMiddleRing: 0.02f,
+			_betweenTipsRingPinky: 0.02f,
+			_indexFirstJoint: 34f,
+			_indexTotal: 128f,
+			_middleFirstJoint: 36f,
+			_middleTotal: 125f,
+			_ringFirstJoint: 45f,
+			_ringTotal: 121f,
+			_pinkyFirstJoint: 50f,
+			_pinkyTotal: 129f,
+			_wristPointsForward: 34.36f,
+			_wristPointsUp: 150.01f,
+			_palmFaceRight: 150f,
+			_palmPointsUp: 180.09f,
+			_palmFaceCamera: 999
+			);
+
+		public static Pose laserEyeStartA = new Pose(
+				_thumbToIndex: 0.06f,
+				_thumbToMiddle: 0.15f,
+				_thumbToRing: 0.17f,
+				_thumbToPinky: 0.18f,
+				_betweenTipsIndexMiddle: 0.09f,
+				_betweenTipsMiddleRing: 0.04f,
+				_betweenTipsRingPinky: 0.05f,
+				_indexFirstJoint: -54f,
+				_indexTotal: -72f,
+				_middleFirstJoint: -11f,
+				_middleTotal: -18f,
+				_ringFirstJoint: 10f,
+				_ringTotal: -3f,
+				_pinkyFirstJoint: 23f,
+				_pinkyTotal: 9f,
+				_wristPointsForward: 117.89f,
+				_wristPointsUp: 19.53f,
+				_palmFaceRight: 67.58f,
+				_palmPointsUp: 73.51f,
+				_palmFaceCamera: 100.56f
+			);
 		public static Pose laserEyeStartB = new Pose(
 			_thumbToIndex: 0.05f,
 			_thumbToMiddle: 0.12f,
@@ -439,6 +487,12 @@ namespace Elemento
 			public List<TonePosePair> tones;
 			public bool breakPoseCancels;
 			public bool finalPoseCancels;
+			public HandRequirement handRequirement;
+			public enum HandRequirement
+			{ 
+				OneHanded,
+				TwoHanded // for now we will simply take the first two poses from "poses" var to be "left" and "right" requirements
+			}
 			public enum CancelOptions
 			{ 
 				None,
@@ -454,7 +508,7 @@ namespace Elemento
 				WhilePoseMaintained
 			}
 			public InvokeOptions invokeOptions;
-			public PoseSequenceItem(float _time, List<Pose> _poses, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, InvokeOptions _invokeOptions = InvokeOptions.OnceOnPoseAcquired, List<TonePosePair> _tones = null)
+			public PoseSequenceItem(float _time, List<Pose> _poses, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, InvokeOptions _invokeOptions = InvokeOptions.OnceOnPoseAcquired, HandRequirement _handRequirement = HandRequirement.OneHanded, List<TonePosePair> _tones = null)
 			{
 				time = _time;
 				poses = _poses;
@@ -464,7 +518,7 @@ namespace Elemento
 				poseCancelType = _poseCancelType;
 				invokeOptions = _invokeOptions;
 			}
-			public PoseSequenceItem(float _time, Pose _pose, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, InvokeOptions _invokeOptions = InvokeOptions.OnceOnPoseAcquired, List<TonePosePair> _tones = null)
+			public PoseSequenceItem(float _time, Pose _pose, Pose _tolerance, Action<HandPoseTracker> _action = null, CancelOptions _poseCancelType = CancelOptions.None, InvokeOptions _invokeOptions = InvokeOptions.OnceOnPoseAcquired, HandRequirement _handRequirement = HandRequirement.OneHanded, List<TonePosePair> _tones = null)
 			{
 				time = _time;
 				poses = new List<Pose>() { _pose };
@@ -651,9 +705,37 @@ namespace Elemento
 			}
 		}
 
+		public static Spell PointToWalk
+		{
+			get
+			{
+				Action<HandPoseTracker> walkForwardAction = (HandPoseTracker currentHand) =>
+				{
+					WalkController.AddWalkForward(currentHand._indexTip.position - currentHand.GetJoint(Finger.Index,1).joint.position); // Direction pointer finger points.
+				};
+				
+				return new Spell
+				(
+					"Walk Forward",
+					new List<PoseSequenceItem>()
+					{
+						new PoseSequenceItem(
+							_time:.22f, 
+							_poses: new List<Pose>(){pointForwardWalk,pointForwardWalk }, 
+							_tolerance: pointForwardWalkTolerance, 
+							_action: walkForwardAction, 
+							_poseCancelType: PoseSequenceItem.CancelOptions.BreakPoseCancels, 
+							_invokeOptions: PoseSequenceItem.InvokeOptions.WhilePoseMaintained, 
+							_handRequirement: PoseSequenceItem.HandRequirement.TwoHanded)
+						//new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, castLaser, PoseSequenceItem.CancelOptions.AcquirePoseCancels)
+					}
+
+				);
+			}
+		}
 
 
-		public static List<Spell> availableSpells = new List<Spell> { forcePush,  TeleportSpell, ForceMove, CubeFountain, LaserEyes };
+		public static List<Spell> availableSpells = new List<Spell> { PointToWalk, forcePush,  TeleportSpell, ForceMove, CubeFountain, LaserEyes };
 
 
 		// This tone pose pair indicators allow tones to manifest when certain pose metrics get within certain bounds.
