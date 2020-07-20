@@ -5,9 +5,9 @@ using static Elemento.Spells;
 
 namespace Elemento
 { 
-    public interface ISpellEffectReceiver
+    public interface ISpellActionHandler
     {
-        void OnSpellAction(Spell spell, float forceAmount = 50f);
+        void OnSpellAction(HandPoseTracker handTracker, Spell spell);
     }
 
 }

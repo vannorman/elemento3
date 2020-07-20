@@ -10,7 +10,7 @@ using static Elemento.Spells;
 namespace Elemento
 {
 
-    public class AICharacter : MonoBehaviour, ISpellEffectReceiver
+    public class AICharacter : MonoBehaviour, IForcePushActionHandler
     {
         public GameObject ragdollPrefab;
         Animator anim => GetComponent<Animator>();
@@ -169,16 +169,15 @@ namespace Elemento
             
         }
 
-        public void OnSpellAction(Spell spell, float forceAmount = 50f)
+        public void OnForcePushAction(float forceAmount = 50)
         {
-            if (spell.name == forcePush.name)
+
+            SetState(State.Ragdoll);
+            foreach (var rb in ragdoll.GetComponentsInChildren<Rigidbody>())
             {
-                SetState(State.Ragdoll);
-                foreach(var rb in ragdoll.GetComponentsInChildren<Rigidbody>())
-                {
-                    rb.AddForce((rb.transform.position - Camera.main.transform.position).normalized * forceAmount);
-                }
+                rb.AddForce((rb.transform.position - Camera.main.transform.position).normalized * forceAmount);
             }
+
         }
     }
 }
