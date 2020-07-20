@@ -1,14 +1,22 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices.ComTypes;
+using Unity.XR.Oculus;
 using UnityEngine;
+using static Elemento.Spells;
+
 namespace Elemento
 {
 
-    public class AICharacter : MonoBehaviour
+    public class AICharacter : MonoBehaviour, ISpellEffectReceiver
     {
         public GameObject ragdollPrefab;
         Animator anim => GetComponent<Animator>();
+
+        public static AICharacter Instance { get; private set; }
+
         float runSpeed = 3;
 
         public enum State
@@ -23,41 +31,76 @@ namespace Elemento
             Dead = 7
         }
         State state;
-        State stateAfterGetUp;
+        State stateAfterReturn;
 
-        void ResumeSetStateAfterGetUp()
+
+
+        void SetStateAfterSeconds(State st, float s)
         {
-            SetState(stateAfterGetUp);
+            setStateAfterSecondsTimer = s;
+            setStateAfterSeconds = true;
+            stateAfterReturn = st;
         }
+
+
         public void SetState(State newState)
         {
             //if (state == newState) return;
-
+            if (state == State.Ragdoll && newState == State.Ragdoll)
+            {
+                return;
+            }
             if (state == State.Ragdoll && newState != State.Ragdoll) // old state was ragdoll, so get up
             {
-                transform.position = ragdoll.transform.position;
-                transform.rotation = Quaternion.identity;
+                ragdoll.SetActive(false);
+                var rdi = ragdoll.GetComponent<RagdollInfo>();
+                var trySpawnHere = ragdoll.GetComponent<RagdollInfo>().toe.position + Vector3.up * 0.2f;
+                Utils2.DebugSphere(trySpawnHere, 0.3f, Color.red);
+                //var maxTries = 10f;
+                //var dirFromRagdollToSelf = (transform.position - ragdoll.GetComponent<RagdollInfo>().realCenter.position).normalized;
+                //while (Physics.CheckSphere(trySpawnHere, 0.5f, ~LayerMask.NameToLayer("Ragdoll")) && maxTries-- > 0)
+                //{
+                //    Utils2.DebugSphere(trySpawnHere, 0.3f,Color.red); 
+                //    var step = 0.2f;
+                //    trySpawnHere -= dirFromRagdollToSelf * step;
+                //}
+
+                //Utils2.DebugSphere(trySpawnHere, 0.3f, Color.red);
+
+                transform.position = trySpawnHere;
+
+                //transform.rotation = Utils2.FlattenRotation(Quaternion.LookRotation(ragdoll.GetComponent<RagdollInfo>().realCenter.up,Vector3.up));
+
+
+                // If the skeleton is on its belly, we want the forward to be head - toe
+                // if skel is on back, we want fwd to be toe - head
+
+                //transform.forward = ragdoll.GetComponent<RagdollInfo>().realCenter.up;
                 /// ragdoll.transform.rotation;
                 Destroy(ragdoll);
                 visibleMesh.SetActive(true);
-                if (Vector3.Angle(ragdoll.transform.GetChild(0).forward, Vector3.up) < 90)
+                GetComponent<Collider>().enabled = true;
+                if (Vector3.Angle(rdi.toe.up, Vector3.up) < 90)
                 {
+                    // face up
                     state = State.GetUpFromFaceUp;
                     anim.SetInteger("LocomotionState",6);
                     anim.SetTrigger("GetUpFromFaceUp");
-                    returnToIdle = true;
-                    returnToIdleAfterSeconds = 2f;
-
-
+                    SetStateAfterSeconds(State.Idle, 2);
+                    var dirFromHeadTotoe = Utils2.FlattenVector(rdi.toe.position - rdi.head.position).normalized;
+                    transform.forward = dirFromHeadTotoe;
                 }
                 else
                 {
+
                     state = State.GetUpFrommFaceDown;
                     anim.SetInteger("LocomotionState", 6);
                     anim.SetTrigger("GetUpFromFaceDown");
-                    returnToIdle = true;
-                    returnToIdleAfterSeconds = 2f;
+                    SetStateAfterSeconds(State.Idle, 4);
+                    var dirFromToeToHead = Utils2.FlattenVector( rdi.head.position - rdi.toe.position).normalized;
+                    transform.forward = dirFromToeToHead;
                 }
+
                 return;
             }
 
@@ -67,6 +110,9 @@ namespace Elemento
                 case State.Ragdoll:
                     ragdoll = Instantiate(ragdollPrefab, transform.position, transform.rotation);
                     visibleMesh.SetActive(false);
+                    GetComponent<Collider>().enabled = false;
+                    SetStateAfterSeconds(State.Idle, 4);
+
                     break;
                 case State.Idle:
                     anim.SetInteger("LocomotionState", 0);
@@ -89,7 +135,7 @@ namespace Elemento
         // Start is called before the first frame update
         void Start()
         {
-            
+            Instance = this;   
         }
 
  
@@ -100,17 +146,17 @@ namespace Elemento
 
 
 
-        bool returnToIdle = false;
-        float returnToIdleAfterSeconds = 0f;
+        bool setStateAfterSeconds = false;
+        float setStateAfterSecondsTimer = 0f;
 
         // Update is called once per frame
         void Update()
         {
-            returnToIdleAfterSeconds -= Time.deltaTime;
-            if (returnToIdle && returnToIdleAfterSeconds < 0)
+            setStateAfterSecondsTimer -= Time.deltaTime;
+            if (setStateAfterSeconds && setStateAfterSecondsTimer < 0)
             {
-                returnToIdle = false;
-                SetState(State.Idle);
+                setStateAfterSeconds = false;
+                SetState(stateAfterReturn);
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
@@ -121,6 +167,18 @@ namespace Elemento
                 SetState(State.Idle);
             }
             
+        }
+
+        public void OnSpellAction(Spell spell, float forceAmount = 50f)
+        {
+            if (spell.name == forcePush.name)
+            {
+                SetState(State.Ragdoll);
+                foreach(var rb in ragdoll.GetComponentsInChildren<Rigidbody>())
+                {
+                    rb.AddForce((rb.transform.position - Camera.main.transform.position).normalized * forceAmount);
+                }
+            }
         }
     }
 }

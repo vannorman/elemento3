@@ -755,6 +755,8 @@ GameObject:
   - component: {fileID: 3069880891950058544}
   - component: {fileID: 3069880891957814254}
   - component: {fileID: 383909918}
+  - component: {fileID: 944946414}
+  - component: {fileID: 944946413}
   m_Layer: 0
   m_Name: DungeonSkeleton_demo
   m_TagString: Untagged
@@ -771,7 +773,7 @@ Transform:
   m_GameObject: {fileID: 3069880891950420048}
   m_LocalRotation: {x: 0, y: 0.92275685, z: 0, w: 0.38538265}
   m_LocalPosition: {x: 495.481, y: 15.27, z: 541.645}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.74, y: 0.74, z: 0.74}
   m_Children:
   - {fileID: 3069880891950058510}
   - {fileID: 3069880891950058574}
@@ -791,7 +793,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 7dffefa622d57754681ed1ab66db27f7, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -812,6 +814,33 @@ MonoBehaviour:
   ragdollPrefab: {fileID: 8032069797094507568, guid: 9d78603ce1009854cad1165fb5dec03a,
     type: 3}
   visibleMesh: {fileID: 3069880891950420078}
+--- !u!136 &944946414
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3069880891950420048}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.4
+  m_Height: 2.62
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.18, z: 0}
+--- !u!114 &944946413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3069880891950420048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a9eb48d536e6484785eaac1d4a0e833, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fatness: 0.6
 --- !u!1 &3069880891950420050
 GameObject:
   m_ObjectHideFlags: 0

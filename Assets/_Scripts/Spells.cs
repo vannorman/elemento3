@@ -394,7 +394,7 @@ namespace Elemento
 			_thumbToIndex: 0.03f,
 			_thumbToMiddle: 0.03f,
 			_thumbToRing: 0.03f,
-			_thumbToPinky: 0.03f,
+			_thumbToPinky: 0.05f,
 			_betweenTipsIndexMiddle: 0.02f,
 			_betweenTipsMiddleRing: 0.02f,
 			_betweenTipsRingPinky: 0.02f,
@@ -551,17 +551,26 @@ namespace Elemento
 			}
 		}
 
-		static Spell forcePush
+		public static Spell forcePush
 		{
 			get
 			{
+				Action<HandPoseTracker> forcePushBuildup = (HandPoseTracker handTracker) =>
+				{
+					ForcePushController.BuildUpForce(handTracker);
+				};
+
 				Action<HandPoseTracker> forcePushAction = (HandPoseTracker handTracker) =>
 				{
 					Physics.SphereCastAll(handTracker.hand.position, 1f, handTracker.PalmForwardDirection, 15f).ToList()
 						.ForEach(x =>
 						{
-							var rb = x.collider.GetComponent<Rigidbody>();
-							if (rb)
+							Debug.Log("hit:" + x.collider.name);
+							if (x.collider.GetComponent<ISpellEffectReceiver>() is var ai && ai != null)
+							{
+								ai.OnSpellAction(forcePush, ForcePushController.ForceAmount);
+							}
+							if (x.collider.GetComponent<Rigidbody>() is var rb && rb != null)
 							{
 								if (rb.isKinematic && rb.GetComponent<AllowKinematicToggle>())
 								{
@@ -569,11 +578,9 @@ namespace Elemento
 								}
 								if (!rb.isKinematic)
                                 {
-									rb.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * 500f);
+									rb.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * ForcePushController.ForceAmount);
                                 }
 							}
-							var ai = x.collider.GetComponent<AICharacter>();
-							if (ai) ai.RunAway();
 						});
 					
 					Utils2.SpellDebug("Force push");
@@ -583,15 +590,18 @@ namespace Elemento
 					Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * .3f, 0.2f, Color.green, 0.5f);
 
 				};
+
+				Action<HandPoseTracker> cancelAction = (HandPoseTracker handTracker) => ForcePushController.Cancel();
 				return new Spell
 				(
 					"Push",
 					new List<PoseSequenceItem>()
 					{
-						new PoseSequenceItem( 0.5f, forcePushStart, forcePushTolerance ),
+						new PoseSequenceItem( 0.5f, forcePushStart, forcePushTolerance, forcePushBuildup, PoseSequenceItem.CancelOptions.None, PoseSequenceItem.InvokeOptions.WhilePoseMaintained),
 						new PoseSequenceItem( 0f, forcePushEnd, forcePushTolerance, forcePushAction, PoseSequenceItem.CancelOptions.AcquirePoseCancels )
-					}
-				
+					},
+					cancelAction
+
 				);
 			}
 		}

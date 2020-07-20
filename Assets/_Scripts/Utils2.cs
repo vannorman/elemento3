@@ -60,7 +60,12 @@ public static class Utils2
 		/// Selection.gameObjects.Count;
 	}
 
-	[MenuItem("Edit/Editor Tools/Clump Items %w")]
+    internal static Quaternion FlattenRotation(Quaternion quaternion)
+    {
+		return Quaternion.Euler(0, quaternion.eulerAngles.y, 0);
+    }
+
+    [MenuItem("Edit/Editor Tools/Clump Items %w")]
 	public static void ClumpItems()
 	{
 		var avg = Vector3.zero;
