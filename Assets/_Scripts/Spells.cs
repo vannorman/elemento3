@@ -562,37 +562,9 @@ namespace Elemento
 
 				Action<HandPoseTracker> forcePushAction = (HandPoseTracker handTracker) =>
 				{
-					Physics.SphereCastAll(handTracker.hand.position, 1f, handTracker.PalmForwardDirection, ForcePushController.Instance.GetRangeForHand(handTracker)).ToList()
-						.ForEach(x =>
-						{
-							if (x.collider.GetComponent<IForcePushActionHandler>() is var ai && ai != null)
-							{
-								ai.OnForcePushAction(ForcePushController.Instance.GetForceAmountForHand(handTracker)); // a bit convoluted logic, but gets the job done
-							}
-							if (x.collider.GetComponent<Rigidbody>() is var rb && rb != null)
-							{
-								if (rb.isKinematic && rb.GetComponent<AllowKinematicToggle>())
-								{
-									rb.isKinematic = false;
-								}
-								if (!rb.isKinematic)
-                                {
-									rb.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * ForcePushController.Instance.GetForceAmountForHand(handTracker));
-                                }
-							}
-						});
-					
-					Utils2.SpellDebug("Force push");
-					int numDebugSpheres = Mathf.RoundToInt(ForcePushController.Instance.GetForceAmountForHand(handTracker) / 50);
-					for (var i = 0; i < numDebugSpheres; i++)
-					{
-						Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * i *.1f, 0.1f, Color.blue, 0.5f);
-					}
-					Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * numDebugSpheres * .1f, 0.2f, Color.green, 0.5f);
-					ForcePushController.Instance.OnSpellAction(handTracker, forcePush);
-
+					ForcePushController.PushNow(handTracker);
 				};
-
+					
 				Action<HandPoseTracker> cancelAction = (HandPoseTracker handTracker) => ForcePushController.Cancel(handTracker);
 				return new Spell
 				(

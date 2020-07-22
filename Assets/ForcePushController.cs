@@ -4,10 +4,11 @@ using OVRTouchSample;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-public class ForcePushController : MonoBehaviour, ISpellActionHandler
+public class ForcePushController : MonoBehaviour
 {
     public float minForce = 50;
     public float maxForce = 400f;
@@ -93,26 +94,19 @@ public class ForcePushController : MonoBehaviour, ISpellActionHandler
 
     
 
-    public void OnSpellAction(HandPoseTracker handTracker, Spells.Spell spell)
+    public void PushNowFx(HandPoseTracker handTracker)
     {
-        if (spell.name == Spells.forcePush.name)
-        {
+       
             var curFx = fx[handTracker].fx;
             var shape = curFx.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;
             shape.radius = 0.02f;
-            //shape.Set
-            //SerializedObject so = new SerializedObject(curFx);
-            //so.FindProperty("ShapeModule.placementMode").intValue = 2;
-            //so.ApplyModifiedProperties();
-            //SerializedProperty it = so.GetIterator();
-            //while (it.Next(true))
-            //    Debug.Log(it.propertyPath);
+           
             var main = curFx.main;
             main.startSpeed = 2.0f;
             fx[handTracker].fx.transform.forward = handTracker.PalmForwardDirection;
 
-        }
+        
     }
 
     void Update()
@@ -151,5 +145,42 @@ public class ForcePushController : MonoBehaviour, ISpellActionHandler
     internal float GetRangeForHand(HandPoseTracker handTracker)
     {
         return fx[handTracker].force/12f;
+    }
+
+    internal static void PushNow(HandPoseTracker handTracker)
+    {
+        var effectAngle = 30;
+        Physics.SphereCastAll(handTracker.hand.position, 5f, handTracker.PalmForwardDirection,Instance.GetRangeForHand(handTracker)).ToList()
+            .Where(x => Vector3.Angle(x.transform.position-Camera.main.transform.position,Camera.main.transform.forward) < effectAngle).ToList()
+            .ForEach(x =>
+            {
+                if (x.collider.GetComponent<IForcePushActionHandler>() is var ai && ai != null)
+                {
+                    ai.OnForcePushAction(ForcePushController.Instance.GetForceAmountForHand(handTracker)); // a bit convoluted logic, but gets the job done
+                }
+                if (x.collider.GetComponent<Rigidbody>() is var rb && rb != null)
+                {
+                    if (rb.isKinematic && rb.GetComponent<AllowKinematicToggle>())
+                    {
+                        rb.isKinematic = false;
+                    }
+                    if (!rb.isKinematic)
+                    {
+                        rb.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * Instance.GetForceAmountForHand(handTracker));
+                    }
+                }
+            });
+
+        Utils2.SpellDebug("Force push");
+        int numDebugSpheres = Mathf.RoundToInt(ForcePushController.Instance.GetForceAmountForHand(handTracker) / 50);
+        for (var i = 0; i < numDebugSpheres; i++)
+        {
+            Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * i * .1f, 0.1f, Color.blue, 0.5f);
+        }
+        Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * numDebugSpheres * .1f, 0.2f, Color.green, 0.5f);
+        Instance.PushNowFx(handTracker);
+
+    
+
     }
 }
