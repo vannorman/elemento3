@@ -133,30 +133,15 @@ namespace Elemento
 			if (Input.GetKeyDown(KeyCode.R))
 			{
 				var i = 0;
-				var s = "";
+				var s = "public static Pose x = new Pose(";
 				CurrentPose.Values.ToList().ForEach(x => s += Pose.ValueLabels[i++] + ": " + x.ToString() + "f,\n");
 				s.TrimEnd(',');
+				s += ");" +
+					"\n";
 				Debug.Log("<color=#008>RECORDED:</color>: " + Time.time);
 				Debug.Log(s);
 				Utils2.SpellDebug("Recorded pose");
 
-			}
-
-			if (Input.GetKeyDown(KeyCode.P))
-			{
-				var i = 0;
-				var s = "";
-				Spells.forcePushStart.Values.ToList().ForEach(x => s += Pose.ValueLabels[i++] + ": " + x.ToString() + "f,\n");
-				s.TrimEnd(',');
-				Debug.Log("<color=#008>FP START:</color>: " + Time.time);
-				Debug.Log(s);
-
-				i = 0;
-				s = "";
-				Spells.forcePushEnd.Values.ToList().ForEach(x => s += Pose.ValueLabels[i++] + ": " + x.ToString() + "f,\n");
-				s.TrimEnd(',');
-				Debug.Log("<color=#008>FP END:</color>: " + Time.time);
-				Debug.Log(s);
 			}
 		}
 

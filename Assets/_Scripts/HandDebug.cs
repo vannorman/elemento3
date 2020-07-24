@@ -7,9 +7,8 @@ using UnityEngine.UI;
 
 namespace Elemento
 {
-	using static Spells;
+	using static PoseCollection;
 	using static PoseData;
-	using static HandPoseTracker;
 	using Pose = PoseData.Pose;
 	public class HandDebug : MonoBehaviour
 	{

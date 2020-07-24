@@ -14,19 +14,22 @@ public class WalkController : MonoBehaviour
         player = FindObjectOfType<OVRCameraRig>().transform;
     }
     public static Vector3 totalForward = Vector3.zero;
+    static bool didWalk = false;
     public static void AddWalkForward(Vector3 fwd)
     {
-        totalForward += fwd;    
+        totalForward += fwd.normalized;
+        didWalk = true;
     }
 
     public float speed = 1;
     private void Update()
     {
-        totalForward = totalForward.normalized;
+        if (!didWalk) return;
         var newPos = player.position + totalForward * Time.deltaTime * speed;
         {
+            var stepHeight = 0.25f;
             // If hit wall, move new pt backward
-            if (Physics.Raycast(player.position, totalForward, out var hit, totalForward.magnitude))
+            if (Physics.Raycast(player.position + Vector3.up * stepHeight, totalForward, out var hit, totalForward.magnitude))
             {
                 var dirTowardsWall = hit.point - player.position;
                 newPos = hit.point - dirTowardsWall * totalForward.magnitude;
@@ -39,6 +42,8 @@ public class WalkController : MonoBehaviour
             {
                 newPos.y = hit.point.y;
             }
+
+            // need to account for steps.
 
         }
         //var angle = Utils2.FlattenVector()

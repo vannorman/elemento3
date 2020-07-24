@@ -757,6 +757,7 @@ GameObject:
   - component: {fileID: 383909918}
   - component: {fileID: 944946414}
   - component: {fileID: 944946413}
+  - component: {fileID: -6892554655674111611}
   m_Layer: 0
   m_Name: DungeonSkeleton_demo
   m_TagString: Untagged
@@ -841,6 +842,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fatness: 0.6
+  height: 0
+--- !u!114 &-6892554655674111611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3069880891950420048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455c6b3e1ea461d4292f3fef464c88ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPoints: 5
+  deadReplacementPrefab: {fileID: 8032069797094507568, guid: 9d78603ce1009854cad1165fb5dec03a,
+    type: 3}
+  deathFx: {fileID: 0}
 --- !u!1 &3069880891950420050
 GameObject:
   m_ObjectHideFlags: 0
