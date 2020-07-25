@@ -106,7 +106,7 @@ namespace Elemento
 
 				Action<HandPoseTracker> forcePushAction = (HandPoseTracker handTracker) =>
 				{
-					ForcePushController.PushNow(handTracker);
+					ForcePushController.PushNowFromHand(handTracker);
 				};
 					
 				Action<HandPoseTracker> cancelAction = (HandPoseTracker handTracker) => ForcePushController.Cancel(handTracker);

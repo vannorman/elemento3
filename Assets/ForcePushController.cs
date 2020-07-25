@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -142,23 +143,39 @@ public class ForcePushController : MonoBehaviour
         return fx[handTracker].force;
     }
 
-    internal float GetRangeForHand(HandPoseTracker handTracker)
+    internal float GetRangeForForce(float force)
     {
-        return fx[handTracker].force/12f;
+        return force/12f;
     }
 
-    internal static void PushNow(HandPoseTracker handTracker)
+    public static void PushNowFromHand(HandPoseTracker handTracker)
     {
+        PushNow(handTracker.hand, handTracker.PalmForwardDirection, Instance.GetForceAmountForHand(handTracker));
+        Instance.PushNowFx(handTracker);
+
+    }
+
+    public static void PushNow(Transform start, Vector3 palmDirection, float force)
+
+    { 
+        var range = Instance.GetRangeForForce(force);
         var effectAngle = 30;
-        Physics.SphereCastAll(handTracker.hand.position, 5f, handTracker.PalmForwardDirection,Instance.GetRangeForHand(handTracker)).ToList()
-            .Where(x => Vector3.Angle(x.transform.position-Camera.main.transform.position,Camera.main.transform.forward) < effectAngle).ToList()
-            .ForEach(x =>
+        var castRadius = 2f;
+        var hits = Physics.SphereCastAll(start.position, castRadius, palmDirection).ToList();
+        Debug.Log("push now. start;" + start + ", palmdir:" + palmDirection + ", force:" + force);
+        foreach (var hit in hits)
+        {
+
+            if (Vector3.Angle(hit.point - start.position, palmDirection) < effectAngle)
             {
-                if (x.collider.GetComponent<IForcePushActionHandler>() is var ai && ai != null)
+                // Hit a qualified collider.
+
+                if (hit.collider.GetComponent<IForcePushActionHandler>() is var ai && ai != null)
                 {
-                    ai.OnForcePushAction(ForcePushController.Instance.GetForceAmountForHand(handTracker)); // a bit convoluted logic, but gets the job done
+                    Debug.Log("al:" + ai);
+                    ai.IOnForcePushAction(palmDirection,force); // a bit convoluted logic, but gets the job done
                 }
-                if (x.collider.GetComponent<Rigidbody>() is var rb && rb != null)
+                if (hit.collider.GetComponent<Rigidbody>() is var rb && rb != null)
                 {
                     if (rb.isKinematic && rb.GetComponent<AllowKinematicToggle>())
                     {
@@ -166,19 +183,24 @@ public class ForcePushController : MonoBehaviour
                     }
                     if (!rb.isKinematic)
                     {
-                        rb.AddForce(Utils2.FlattenVector(handTracker.PalmForwardDirection) * Instance.GetForceAmountForHand(handTracker));
+                        rb.AddForce(Utils2.FlattenVector(palmDirection) * force);
                     }
                 }
-            });
+            }
+            else
+            {
+                Debug.Log("vec ang betw hit pt - start pos  and palmdirection" + hit.point + ", " + start.position + "," + palmDirection);
+            }
+        }
+        
 
         Utils2.SpellDebug("Force push");
-        int numDebugSpheres = Mathf.RoundToInt(ForcePushController.Instance.GetForceAmountForHand(handTracker) / 50);
+        int numDebugSpheres = Utils2.IntParse(force); // 50);
         for (var i = 0; i < numDebugSpheres; i++)
         {
-            Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * i * .1f, 0.1f, Color.blue, 0.5f);
+            Utils2.DebugSphere(start.position + palmDirection.normalized * i * .1f, 0.1f, Color.blue, 0.5f);
         }
-        Utils2.DebugSphere(handTracker.hand.position + handTracker.PalmForwardDirection * numDebugSpheres * .1f, 0.2f, Color.green, 0.5f);
-        Instance.PushNowFx(handTracker);
+        Utils2.DebugSphere(start.position + palmDirection.normalized * numDebugSpheres * .1f, 0.2f, Color.green, 0.5f);
 
     
 

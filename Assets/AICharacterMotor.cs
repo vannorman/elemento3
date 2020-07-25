@@ -5,7 +5,7 @@ namespace Elemento
 { 
     public class AICharacterMotor : MonoBehaviour
     {
-        private float fallSpeed = 2f;
+        public float fallSpeed = 0;
         public float fatness = 0.25f;
         public float height = 0f;
         // Start is called before the first frame update

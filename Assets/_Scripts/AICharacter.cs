@@ -169,15 +169,14 @@ namespace Elemento
             
         }
 
-        public void OnForcePushAction(float forceAmount = 50)
+        public void IOnForcePushAction(Vector3 dir, float forceAmount = 50)
         {
 
             SetState(State.Ragdoll);
             foreach (var rb in ragdoll.GetComponentsInChildren<Rigidbody>())
             {
-                rb.AddForce((rb.transform.position - Camera.main.transform.position).normalized * forceAmount);
+                rb.AddForce(dir * forceAmount);
             }
-
         }
     }
 }

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IForcePushActionHandler 
 {
-    void OnForcePushAction(float force);
+    void IOnForcePushAction(Vector3 dir, float force);
 
 }

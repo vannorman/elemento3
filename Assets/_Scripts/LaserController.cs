@@ -18,6 +18,8 @@ namespace Elemento
         public float scaleFactor = 0.1f;
         public ParticleSystem fireParticleFx;
 
+
+
         // Start is called before the first frame update
         void Start()
         {
@@ -63,7 +65,7 @@ namespace Elemento
         }
 
 
-        private void DrawLaser(Vector3 origin, Vector3 pinchPosition, float widthBetweenFingers)
+        public void DrawLaser(Vector3 origin, Vector3 pinchPosition, float widthBetweenFingers)
         { 
             var laserDirection = (pinchPosition - origin).normalized;
             laser.gameObject.SetActive(true);

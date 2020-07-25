@@ -9,6 +9,7 @@ namespace Obi
 		public float radius = 5;
 		public bool radial = true;
 		public bool invert = true;
+		public float innerRadius = .1f;
 
 		public override void ApplyForcesToActor(ObiActor actor)
         {
@@ -28,10 +29,17 @@ namespace Obi
 
 				float sqrMag = distanceVector.sqrMagnitude;
 				float falloff = Mathf.Clamp01((sqrRadius - sqrMag) / sqrRadius);
-
+				if (distanceVector.magnitude < innerRadius)
+				{
+					//Debug.Log("mag;" + distanceVector.magnitude + ", inner:" + innerRadius);
+					continue;
+				}
 				Vector4 force;
 				if (radial)
+				{ 
 					force = distanceVector/(Mathf.Sqrt(sqrMag) + float.Epsilon) * falloff * finalIntensity * (invert ? -1 : 1);
+				
+				}
 				else
 					force = forward * falloff * finalIntensity;
 

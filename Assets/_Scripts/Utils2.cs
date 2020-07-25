@@ -17,6 +17,14 @@ public static class Utils2
 				select x.gameObject).FirstOrDefault()?.transform;
 	}
 
+	public static float Rand1
+	{
+		get
+		{
+			return Random.Range(-1f, 1f);
+		}
+	}
+
 #if UNITY_EDITOR
 	[MenuItem("Edit/Editor Tools/Set Local Position To Zero %#y")]
 	public static void SetLocalPositionToZero()
@@ -36,7 +44,7 @@ public static class Utils2
 		}
 	}
 
-	[MenuItem("Edit/Editor Tools/Set Local Rotation To Zero %y")]
+	[MenuItem("Edit/Editor Tools/Set Local Rotation To Zero %&y")]
 	public static void SetLocalRotationToZero()
 	{
 		foreach (GameObject o in Selection.gameObjects)
@@ -87,6 +95,8 @@ public static class Utils2
 		Selection.gameObjects.ToList().ForEach(x => { x.transform.position -= (avg - x.transform.position).normalized; });
 		/// Selection.gameObjects.Count;
 	}
+
+
 #endif
 
 	static Text debugOut;
@@ -133,6 +143,24 @@ public static class Utils2
 		}
 	}
 
+	public static Vector3[] GetCircleOfPoints(float degreesToComplete = 360, float radius = 150, float scale = 5)
+	{ // lower scale = higher point count
+	  // This method can be used to get a set of Vector3 points that draw a cirle about the Y axis.
+	  // Useful if you want to cast a spell that creates an arrangement of objects in a circle around the spellcaster or target.
+	  // Note: The Vector3[] array will exist in local space
+
+		int count = (int)(degreesToComplete * radius / scale / 60);
+		float arcLength = degreesToComplete / count;
+		Vector3[] ret = new Vector3[count];
+		for (int i = 0; i < count; i++)
+		{
+			// commented Debug.Log ("radius:"+radius);
+			float xPos = Mathf.Sin(Mathf.Deg2Rad * i * arcLength) * (radius); // x and y calculated with "trigonometry"
+			float yPos = Mathf.Cos(Mathf.Deg2Rad * i * arcLength) * (radius);
+			ret[i] = new Vector3(xPos, 0, yPos);
+		}
+		return ret;
+	}
 
 	#region MathUtils
 	internal static int FriendlyAngle(float v)
