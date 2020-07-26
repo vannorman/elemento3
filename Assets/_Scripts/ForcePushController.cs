@@ -158,11 +158,24 @@ public class ForcePushController : MonoBehaviour
     public static void PushNow(Transform start, Vector3 palmDirection, float force)
 
     { 
+
         var range = Instance.GetRangeForForce(force);
         var effectAngle = 30;
         var castRadius = 2f;
-        var hits = Physics.SphereCastAll(start.position, castRadius, palmDirection).ToList();
-        Debug.Log("push now. start;" + start + ", palmdir:" + palmDirection + ", force:" + force);
+        var hits = Physics.SphereCastAll(start.position, castRadius, palmDirection, range).ToList();
+
+        var manaRequired = Spells.forcePush.mana * (8 * force / Instance.maxForce);
+        if (ManaController.UseMana(manaRequired))
+        {
+
+        }
+        else
+        {
+            // not enough mana
+            return;
+        }
+
+
         foreach (var hit in hits)
         {
 

@@ -87,6 +87,7 @@ namespace Elemento
 					// Invoke spell every frame if desired
 					if (curSeq.invokeOptions == PoseSequenceItem.InvokeOptions.WhilePoseMaintained && AnyPoseWithinTolerance(currentHand.hand.CurrentPose, curSeq.poses, curSeq.tolerance))
 					{
+						
 						curSeq.action.Invoke(currentHand.hand);
 					}
 

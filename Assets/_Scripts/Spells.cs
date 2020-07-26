@@ -83,14 +83,16 @@ namespace Elemento
 
 		public class Spell
 		{
+			public int mana;
 			public HandPoseTracker castingHand; // changes when spell is cast
 			public string name = "Spell1";
 			public List<PoseSequenceItem> sequence = new List<PoseSequenceItem>();
 			public Action<HandPoseTracker> cancelAction;
-			public Spell(string _name, List<PoseSequenceItem> _sequence, Action<HandPoseTracker> _canceled = null)
+			public Spell(string _name, List<PoseSequenceItem> _sequence, int _mana, Action<HandPoseTracker> _canceled = null)
 			{
 				name = _name;
 				sequence = _sequence;
+				mana = _mana;
 				cancelAction = _canceled;
 			}
 		}
@@ -118,6 +120,7 @@ namespace Elemento
 						new PoseSequenceItem( 0.5f, forcePushStart, forcePushTolerance, forcePushBuildup, PoseSequenceItem.CancelOptions.None, PoseSequenceItem.InvokeOptions.WhilePoseMaintained),
 						new PoseSequenceItem( 0f, forcePushEnd, forcePushTolerance, forcePushAction, PoseSequenceItem.CancelOptions.AcquirePoseCancels )
 					},
+					_mana: 5,
 					cancelAction
 
 				);
@@ -145,6 +148,7 @@ namespace Elemento
 						new PoseSequenceItem( 0.3f, teleportStart, teleportTolerance, a1 ),
 						new PoseSequenceItem( 0.5f, teleportExecute, teleportTolerance, a2, PoseSequenceItem.CancelOptions.AcquirePoseCancels ),
 					},
+					_mana: 5,
 					cancelAction
 
 
@@ -168,6 +172,7 @@ namespace Elemento
 						new PoseSequenceItem(7, forceMoveGrab, forceMoveGrabTolerance, beginMoveingCubes, PoseSequenceItem.CancelOptions.BreakPoseCancels), // if you break this pose, it cancels.
 						//new PoseSequenceItem(0, forceMoveStart, forceMoveTolerance, cancelAction),
 					},
+					_mana: 5,
 					cancelAction
 
 				);
@@ -198,8 +203,10 @@ namespace Elemento
 						new PoseSequenceItem(0.2f, pullMatterFromGroundStart, tolerance_01),
 						new PoseSequenceItem(2, pullMatterFromGroundTwo, tolerance_01),
 						new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, cubeFountain, PoseSequenceItem.CancelOptions.AcquirePoseCancels)
-					}
-					
+					},
+					_mana: 5
+
+
 				);
 			}
 		}
@@ -226,6 +233,7 @@ namespace Elemento
 						new PoseSequenceItem(.22f, new List<Pose>(){laserEyeStartA,laserEyeStartB,laserEyeStartC }, laserEyesTolerance, castLaserAction, PoseSequenceItem.CancelOptions.BreakPoseCancels, PoseSequenceItem.InvokeOptions.WhilePoseMaintained)
 						//new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, castLaser, PoseSequenceItem.CancelOptions.AcquirePoseCancels)
 					},
+					_mana: 5,
 					cancelAction
 
 				);
@@ -255,7 +263,8 @@ namespace Elemento
 							_invokeOptions: PoseSequenceItem.InvokeOptions.WhilePoseMaintained, 
 							_handRequirement: PoseSequenceItem.HandRequirement.TwoHanded)
 						//new PoseSequenceItem(2, pullMatterFromGroundEnd, tolerance_01, castLaser, PoseSequenceItem.CancelOptions.AcquirePoseCancels)
-					}
+					},
+					_mana: 5
 
 				);
 			}
