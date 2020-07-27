@@ -66,7 +66,13 @@ namespace Elemento
 
 
         public void DrawLaser(Vector3 origin, Vector3 pinchPosition, float widthBetweenFingers)
-        { 
+        {
+
+            if (!ManaController.UseMana(1))
+            {
+                return;
+            }
+
             var laserDirection = (pinchPosition - origin).normalized;
             laser.gameObject.SetActive(true);
             laser.transform.position = pinchPosition;

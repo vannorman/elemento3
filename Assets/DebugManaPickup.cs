@@ -20,7 +20,6 @@ public class DebugManaPickup : MonoBehaviour
         frames = 0;
         foreach (var col in Physics.OverlapSphere(transform.position, 1f))
         {
-            Debug.Log("hit:" + col.name);
             if (col.GetComponent<ManaPickup>() is var mp && mp != null)
             {
                 ManaController.Instance.PickupMana(mp.manaAmount);

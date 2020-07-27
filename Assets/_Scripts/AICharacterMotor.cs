@@ -7,7 +7,6 @@ namespace Elemento
     {
         public float fallSpeed = 0;
         public float fatness = 0.25f;
-        public float height = 0f;
         // Start is called before the first frame update
         void Start()
         {
@@ -20,9 +19,10 @@ namespace Elemento
             {
 
                 // stick to ground
-                if (Physics.Raycast(transform.position, Vector3.down, out var hit, 1f))
+                var floorOffset = 0.25f;
+                if (Physics.Raycast(transform.position+ Vector3.up * floorOffset, Vector3.down, out var hit, 1f))
                 {
-                    transform.position = hit.point + Vector3.up * height;
+                    transform.position = hit.point + Vector3.up * floorOffset;
                     fallSpeed = 0;
                 }
                 else

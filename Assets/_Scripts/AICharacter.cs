@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Oculus.Platform.Samples.VrHoops;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
+using TreeEditor;
 using Unity.XR.Oculus;
 using UnityEngine;
 using static Elemento.Spells;
+using Random = UnityEngine.Random;
 
 namespace Elemento
 {
@@ -13,6 +16,7 @@ namespace Elemento
     public class AICharacter : MonoBehaviour, IForcePushActionHandler
     {
         public GameObject ragdollPrefab;
+        public bool startStateTalking = false;
         Animator anim => GetComponent<Animator>();
 
         public static AICharacter Instance { get; private set; }
@@ -28,12 +32,35 @@ namespace Elemento
             Ragdoll = 4,
             GetUpFrommFaceDown = 5,
             GetUpFromFaceUp = 6,
-            Dead = 7
+            Dead = 7,
+            Talking = 8
         }
+
+        AudioSource aud;
+        public AudioClip prisonerEscaped;
+        public AudioClip falling;
+        internal void Say(AudioClip targetClip, bool loop=false, bool randomPitch=false)
+        {
+            if (!aud) aud = gameObject.AddComponent<AudioSource>();
+            aud.loop = loop;
+            aud.clip = targetClip;
+            if (randomPitch)
+            {
+                aud.pitch = Random.Range(0.9f, 1.1f);
+            }
+            aud.Play();
+        }
+
         State state;
         State stateAfterReturn;
 
 
+        public void LookAtPlayer()
+        {
+            var target = Camera.main.transform.position;
+            target.y = transform.position.y;
+            transform.LookAt(target);
+        }
 
         void SetStateAfterSeconds(State st, float s)
         {
@@ -123,6 +150,10 @@ namespace Elemento
                 case State.Running:
                     anim.SetInteger("LocomotionState", 2);
                     break;
+                case State.Talking:
+                    
+                    anim.SetTrigger("StartTalking");
+                    break;
 
             }
         }
@@ -135,7 +166,13 @@ namespace Elemento
         // Start is called before the first frame update
         void Start()
         {
-            Instance = this;   
+            aud = GetComponent<AudioSource>();
+            Instance = this;
+            if (startStateTalking)
+            {
+                SetState(State.Talking);
+            }
+            anim.SetInteger("LocomotionState", -1);
         }
 
  
@@ -152,6 +189,12 @@ namespace Elemento
         // Update is called once per frame
         void Update()
         {
+            if (state == State.Ragdoll)
+            {
+                Debug.Log("transform pos:" + transform.position);
+                transform.position = ragdoll.GetComponent<RagdollInfo>().toe.position;
+                //transform.position = ragdoll.GetComponentInChildren<Rigidbody>().transform.position;
+            }
             setStateAfterSecondsTimer -= Time.deltaTime;
             if (setStateAfterSeconds && setStateAfterSecondsTimer < 0)
             {
@@ -171,7 +214,7 @@ namespace Elemento
 
         public void IOnForcePushAction(Vector3 dir, float forceAmount = 50)
         {
-
+            Say(falling,false,true);
             SetState(State.Ragdoll);
             foreach (var rb in ragdoll.GetComponentsInChildren<Rigidbody>())
             {
