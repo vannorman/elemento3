@@ -246,7 +246,7 @@ namespace Elemento
 			{
 				Action<HandPoseTracker> walkForwardAction = (HandPoseTracker currentHand) =>
 				{
-					WalkController.AddWalkForward(currentHand._indexTip.position - currentHand.GetJoint(Finger.Index,1).joint.position); // Direction pointer finger points.
+					WalkController.AddWalkForward((currentHand._indexTip.position - currentHand.GetJoint(Finger.Index,1).joint.position).normalized, currentHand); // Direction pointer finger points.
 				};
 				
 				return new Spell

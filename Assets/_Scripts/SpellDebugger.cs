@@ -47,7 +47,7 @@ namespace Elemento
 		// Start is called before the first frame update
 		void Start()
 		{
-			handPoseTracker = handPoseTrackerLeft;
+			handPoseTracker = handPoseTrackerRight;
 			nextSpell.InteractableStateChanged.AddListener(NextSpell);
 			prevSpell.InteractableStateChanged.AddListener(PreviousSpell);
 			timeModeInfiniteButton.InteractableStateChanged.AddListener(ToggleTimeMode);

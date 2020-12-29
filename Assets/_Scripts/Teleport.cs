@@ -53,7 +53,7 @@ public class Teleport : MonoBehaviour
 				cameraFwd.Rotate(Camera.main.transform.right, 5); // look down a smidge
 				var lookDir = cameraFwd.forward;
 				Destroy(cameraFwd.gameObject);
-				if (Physics.Raycast(new Ray(Camera.main.transform.position, lookDir), out var hit))
+				if (Physics.Raycast(new Ray(Camera.main.transform.position, lookDir), out var hit,LayerMask.NameToLayer("Trigger")))
 				{
 					target.transform.position = hit.point;
 					if (Mathf.Abs(hit.point.y - player.position.y) > maxVert)

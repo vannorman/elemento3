@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
-using TreeEditor;
 using Unity.XR.Oculus;
 using UnityEngine;
 using static Elemento.Spells;
@@ -191,7 +190,7 @@ namespace Elemento
         {
             if (state == State.Ragdoll)
             {
-                Debug.Log("transform pos:" + transform.position);
+                //Debug.Log("transform pos:" + transform.position);
                 transform.position = ragdoll.GetComponent<RagdollInfo>().toe.position;
                 //transform.position = ragdoll.GetComponentInChildren<Rigidbody>().transform.position;
             }

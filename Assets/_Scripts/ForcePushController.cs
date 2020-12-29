@@ -157,22 +157,24 @@ public class ForcePushController : MonoBehaviour
 
     public static void PushNow(Transform start, Vector3 palmDirection, float force)
 
-    { 
-        var manaRequired = Spells.forcePush.mana * (8 * force / Instance.maxForce);
+    {
+        //Debug.Log("1");
+        var manaRequired = Spells.forcePush.mana * (1 * force / Instance.maxForce);
         if (!ManaController.UseMana(manaRequired)) return;
 
+        //return;
         var range = Instance.GetRangeForForce(force);
-        var effectAngle = 30;
+        var effectAngle = 60;
         var castRadius = 2f;
         var hits = Physics.SphereCastAll(new Ray(start.position, palmDirection), castRadius, range,LayerMask.NameToLayer("Trigger")).ToList();
 
 
 
 
-        foreach (var hit in hits)
+         foreach (var hit in hits)
         {
 
-            if (Vector3.Angle(hit.point - start.position, palmDirection) < effectAngle)
+             if (Vector3.Angle(hit.point - start.position, palmDirection) < effectAngle)
             {
                 // Hit a qualified collider.
 
@@ -195,13 +197,13 @@ public class ForcePushController : MonoBehaviour
             }
             else
             {
-                Debug.Log("vec ang betw hit pt - start pos  and palmdirection" + hit.point + ", " + start.position + "," + palmDirection);
+                //Debug.Log("vec ang betw hit pt - start pos  and palmdirection" + hit.point + ", " + start.position + "," + palmDirection);
             }
         }
         
 
         Utils2.SpellDebug("Force push");
-        int numDebugSpheres = Utils2.IntParse(force); // 50);
+        int numDebugSpheres = Mathf.RoundToInt(force / 100f);
         for (var i = 0; i < numDebugSpheres; i++)
         {
             Utils2.DebugSphere(start.position + palmDirection.normalized * i * .1f, 0.1f, Color.blue, 0.5f);

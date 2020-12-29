@@ -46,7 +46,7 @@ namespace Elemento
 			_ringTotal: 121f,
 			_pinkyFirstJoint: 50f,
 			_pinkyTotal: 129f,
-			_wristPointsForward: 34.36f,
+			_wristPointsForward: 60.36f,
 			_wristPointsUp: 150.01f,
 			_palmFaceRight: 150f,
 			_palmPointsUp: 180.09f,
@@ -234,7 +234,7 @@ namespace Elemento
 			_pinkyFirstJoint: 1000f,
 			_pinkyTotal: 1000f,
 			_wristPointsForward: 999.36f,
-			_wristPointsUp: 45.01f,
+			_wristPointsUp: 25.01f,
 			_palmFaceRight: 31.90f,
 			_palmPointsUp: 34.09f,
 			_palmFaceCamera: 999

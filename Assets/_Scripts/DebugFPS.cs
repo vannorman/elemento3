@@ -31,7 +31,8 @@ namespace Elemento
 
             if (Input.GetKeyDown(KeyCode.F)) 
             {
-                ForcePushController.PushNow(transform, transform.forward, ForcePushController.Instance.maxForce); 
+                Debug.Log("hi");
+                ForcePushController.PushNow(transform, transform.forward, ForcePushController.Instance.maxForce / 3.5f);
             }
 
             var speed2 = Input.GetKey(KeyCode.LeftShift) ? speed * 2.5f : speed;
@@ -41,9 +42,28 @@ namespace Elemento
 
             float h = rotSpeed * Input.GetAxis("Mouse X");
             float v = rotSpeed * Input.GetAxis("Mouse Y");
-            if (
-                (Vector3.Angle(Vector3.up,transform.up) < 70 || h < 0)
-                && Vector3.Angle(-Vector3.up,-transform.up) < 70 || h > 0) transform.Rotate(Vector3.right * -v);
+            var canLookUpDown = false;
+            var maxTilt = 55;
+            var tilt = Vector3.Angle(Vector3.up, transform.up);
+            if (transform.forward.y < 0)
+            {
+                // looking down
+                if (tilt < maxTilt || v > 0)
+                {
+                    // not maxed out on down look, OR trying to look UP.
+                    canLookUpDown = true;
+                }
+            }
+            else if (transform.forward.y >= 0)
+            {
+                if (tilt < maxTilt || v < 0)
+                {
+                    canLookUpDown = true;
+                }
+            }
+
+
+            if (canLookUpDown) transform.Rotate(Vector3.right * -v);
             transform.Rotate(Vector3.up * h, Space.World);
 
         }

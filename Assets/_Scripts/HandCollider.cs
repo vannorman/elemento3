@@ -17,7 +17,10 @@ namespace Elemento
 			tipCollider.transform.localScale *= .015f;
 			tipCollider.transform.SetParent(hand._indexTip);
 			tipCollider.transform.localPosition = Vector3.zero;
-
+			tipCollider.tag = hand.handType == HandType.Left ? TagManager.TipColliderOverride_Left : TagManager.TipColliderOverride_Right;
+			tipCollider.transform.forward = -tipCollider.transform.parent.right;
+			tipCollider.name = tipCollider.tag;
+			tipCollider.transform.parent.gameObject.AddComponent<FingerTipCollider>();
 		}
 
 		// Update is called once per frame

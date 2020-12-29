@@ -4,21 +4,26 @@ using UnityEngine;
 
 public class RigidbodyFollow : MonoBehaviour
 {
-    public Transform target;
+    Transform target;
     public float speed = 3;
 
     Rigidbody rb;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        target = Camera.main.transform;
     }
     void Update()
     {
         var dirToTarget = (target.transform.position - transform.position);
         var distToTarget = dirToTarget.magnitude;
+        if (distToTarget < 0.2f)
+        {
+            return;
+        }
         if (distToTarget > 3)
         {
-            transform.position = target.position + dirToTarget * 3f;
+            transform.position = target.position; // + dirToTarget.normalized * 3f;
         }
         else if (distToTarget > .2f)
         { 
